@@ -1,0 +1,34 @@
+PREREQUISITES
+
+  You need docker, docker-compose, node, and npm to run the platform.
+  In addition, you need cplex, which must be place at:
+  modeling-base/cplex_128.tar.gz
+  To make sure all prerequisites are satisifed, run:
+
+  ./bootstrap.sh check
+
+INSTALLATION
+
+  Use the installation script, which will:
+    * load the modeling base docker image
+    * clone git repositories for all required services
+    * install npm packages
+    * build docker images
+    * create empty local databases
+    * create a demo user
+  This may take a while (expect 10-15 minutes), depending on your bandwidth and
+  processing power. Run the installation script with:
+
+  ./bootstrap.sh init
+
+USAGE
+
+  To run the platform, first start the services, then run the caffeine frontend:
+
+    docker-compose up
+
+  When the server is ready, open your browser on http://localhost:4200/
+  To authenticate, you may login with the demo user:
+
+    Email: demo@demo
+    Password: demo

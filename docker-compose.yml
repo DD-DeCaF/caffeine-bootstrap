@@ -1,0 +1,205 @@
+version: "3.2"
+services:
+  caffeine:
+    image: nginx
+    volumes:
+      - "./caffeine/dist:/usr/share/nginx/html:ro"
+    ports:
+      - "4200:80"
+
+  iam:
+    build:
+      context: iam
+      dockerfile: Dockerfile
+    image: gcr.io/dd-decaf-cfbf6/iam:demo
+    ports:
+      - "8001:8000"
+    volumes:
+      - "./iam:/app"
+      - type: tmpfs
+        target: "/prometheus-client"
+    depends_on:
+      - postgres
+    environment:
+      - ENVIRONMENT=development
+      - SCRIPT_NAME=
+      - SERVICE_URL=
+      - FLASK_APP=src/iam/wsgi.py
+      - ALLOWED_ORIGINS=*
+      - SENTRY_DSN=
+      - BASIC_AUTH_USERNAME=admin
+      - BASIC_AUTH_PASSWORD=admin
+      - FEAT_TOGGLE_LOCAL_AUTH=1
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_NAME=iam
+      - DB_USERNAME=postgres
+      - DB_PASSWORD=
+      - FEAT_TOGGLE_FIREBASE=
+      - FIREBASE_CLIENT_CERT_URL=
+      - FIREBASE_CLIENT_EMAIL=
+      - FIREBASE_CLIENT_ID=
+      - FIREBASE_PRIVATE_KEY_ID=
+      - FIREBASE_PRIVATE_KEY=
+      - prometheus_multiproc_dir=/prometheus-client
+    command: gunicorn -c gunicorn.py iam.wsgi:app
+
+  map-storage:
+    build:
+      context: map-storage
+      dockerfile: Dockerfile
+    image: gcr.io/dd-decaf-cfbf6/maps:demo
+    depends_on:
+      - postgres
+      - iam
+    ports:
+      - "8002:8000"
+    volumes:
+      - "./map-storage:/app"
+    environment:
+      - ENVIRONMENT=development
+      - FLASK_APP=src/map_storage/wsgi.py
+      - SCRIPT_NAME=
+      - ALLOWED_ORIGINS=*
+      - SENTRY_DSN=
+      - IAM_API=http://iam:8000
+    command: gunicorn -c gunicorn.py map_storage.wsgi:app
+
+  metabolic-ninja:
+    build:
+      context: metabolic-ninja
+      dockerfile: Dockerfile
+    image: gcr.io/dd-decaf-cfbf6/metabolic-ninja:demo
+    depends_on:
+    - redis
+    - postgres
+    - iam
+    ports:
+    - "8003:8000"
+    volumes:
+    - "./metabolic-ninja:/app"
+    environment:
+    - ENVIRONMENT=development
+    - FLASK_APP=src/metabolic_ninja/wsgi.py
+    - SCRIPT_NAME=
+    - ALLOWED_ORIGINS=*
+    - SENTRY_DSN=
+    - REDIS_HOST=redis:6379
+    - MODEL_STORAGE_API=http://model-storage:8000
+    - POSTGRES_HOST=postgres
+    - POSTGRES_PORT=5432
+    - POSTGRES_DB_NAME=metabolic_ninja
+    - POSTGRES_USERNAME=postgres
+    - POSTGRES_PASS=
+    - IAM_API=http://iam:8000
+    command: gunicorn -c gunicorn.py metabolic_ninja.wsgi:app
+
+  metabolic-ninja-worker:
+    image: gcr.io/dd-decaf-cfbf6/metabolic-ninja:demo
+    depends_on:
+    - redis
+    volumes:
+    - "./metabolic-ninja:/app"
+    environment:
+    - SENTRY_DSN=
+    - REDIS_HOST=redis:6379
+    - POSTGRES_HOST=postgres
+    - POSTGRES_PORT=5432
+    - POSTGRES_DB_NAME=metabolic_ninja
+    - POSTGRES_USERNAME=postgres
+    - POSTGRES_PASS=
+    - C_FORCE_ROOT=1
+    command: celery -A metabolic_ninja.tasks worker --loglevel=info
+
+  model:
+    build:
+      context: model
+      dockerfile: Dockerfile
+    image: gcr.io/dd-decaf-cfbf6/model:demo
+    ports:
+      - "8004:8000"
+    depends_on:
+      - redis
+      - iam
+    environment:
+      - ENVIRONMENT=development
+      - SCRIPT_NAME=
+      - REDIS_ADDR=redis
+      - REDIS_PORT=6379
+      - IAM_API=http://iam:8000
+      - ID_MAPPER_API=https://api.dd-decaf.eu/idmapping/query
+      - MODEL_STORAGE_API=http://model-storage:8000
+      - ICE_API=http://localhost
+      - ICE_USERNAME=
+      - ICE_PASSWORD=
+      - prometheus_multiproc_dir=/prometheus-client
+      # Disabling sympy cache prevents significant memory leaks in the cobrapy stack
+      - SYMPY_USE_CACHE=no
+    volumes:
+      - ./model:/app
+      - type: tmpfs
+        target: "/prometheus-client"
+    command: gunicorn -c gunicorn.py model.wsgi:app
+
+  model-storage:
+    build:
+      context: model-storage
+      dockerfile: Dockerfile
+    image: gcr.io/dd-decaf-cfbf6/model-storage:demo
+    depends_on:
+      - postgres
+      - iam
+    ports:
+      - "8005:8000"
+    volumes:
+      - "./model-storage:/app"
+    environment:
+      - ENVIRONMENT=development
+      - FLASK_APP=src/model_storage/wsgi.py
+      - SCRIPT_NAME=
+      - ALLOWED_ORIGINS=*
+      - SENTRY_DSN=
+      - POSTGRES_HOST=postgres
+      - POSTGRES_PORT=5432
+      - POSTGRES_DB_NAME=model_storage
+      - POSTGRES_USERNAME=postgres
+      - POSTGRES_PASS=
+      - IAM_API=http://iam:8000
+    command: gunicorn -c gunicorn.py model_storage.wsgi:app
+
+  warehouse:
+    build:
+      context: warehouse
+      dockerfile: Dockerfile
+    image: dddecaf/warehouse:demo
+    depends_on:
+      - postgres
+      - iam
+    ports:
+      - "8006:8000"
+    volumes:
+      - "./warehouse:/app"
+    environment:
+      - ENVIRONMENT=development
+      - SCRIPT_NAME=
+      - FLASK_APP=src/warehouse/wsgi.py
+      - ALLOWED_ORIGINS=*
+      - SENTRY_DSN=
+      - POSTGRES_HOST=postgres
+      - POSTGRES_PORT=5432
+      - POSTGRES_DB_NAME=warehouse
+      - POSTGRES_ENV_USERNAME=postgres
+      - POSTGRES_ENV_PASS=
+      - BASIC_AUTH_USERNAME=admin
+      - BASIC_AUTH_PASSWORD=admin
+      - IAM_API=http://iam:8000
+    command: ["/bin/sh","-c","FLASK_APP=src/warehouse/wsgi.py flask db upgrade && gunicorn -c gunicorn.py warehouse.wsgi:app"]
+
+  postgres:
+    image: postgres:9.6-alpine
+
+  redis:
+    image: redis
+    ports:
+    - "6379:6379"
+    command: redis-server --appendonly yes
