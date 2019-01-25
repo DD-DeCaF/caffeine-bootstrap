@@ -195,6 +195,31 @@ services:
       - IAM_API=http://iam:8000
     command: ["/bin/sh","-c","FLASK_APP=src/warehouse/wsgi.py flask db upgrade && gunicorn -c gunicorn.py warehouse.wsgi:app"]
 
+  design-storage:
+    build:
+      context: design-storage
+      dockerfile: Dockerfile
+    image: dddecaf/design-storage:demo
+    depends_on:
+       - postgres
+    ports:
+      - "8007:8000"
+    volumes:
+      - "./design-storage:/app"
+    environment:
+      - ENVIRONMENT=development
+      - FLASK_APP=src/design_storage/wsgi.py
+      - SCRIPT_NAME=
+      - ALLOWED_ORIGINS=http://localhost:4200
+      - SENTRY_DSN=
+      - POSTGRES_HOST=postgres
+      - POSTGRES_PORT=5432
+      - POSTGRES_DB_NAME=designs
+      - POSTGRES_USERNAME=postgres
+      - POSTGRES_PASS=
+      - IAM_API=http://iam:8000
+    command: gunicorn -c gunicorn.py design_storage.wsgi:app
+
   postgres:
     image: postgres:9.6-alpine
 

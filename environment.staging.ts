@@ -25,6 +25,7 @@ export const environment: Configuration = {
     metabolic_ninja: 'http://localhost:8003',
     warehouse: 'http://localhost:8006',
     maps: 'http://localhost:8002',
+    design_storage: 'http://localhost:8007',
   },
   GA: {
     trackingID: 'UA-106144097-3',

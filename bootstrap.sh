@@ -40,7 +40,7 @@ elif [ "$1" = "init" ]; then
   echo
   echo "caffeine (1/8): cloning git repositories"
   NPM_SERVICES="caffeine"
-  DOCKER_SERVICES="iam map-storage metabolic-ninja model model-storage warehouse"
+  DOCKER_SERVICES="iam map-storage metabolic-ninja model model-storage warehouse design-storage"
   SERVICES="${NPM_SERVICES} ${DOCKER_SERVICES}"
   for SERVICE in ${SERVICES}; do
     git clone https://github.com/dd-decaf/${SERVICE}
@@ -81,16 +81,18 @@ elif [ "$1" = "init" ]; then
   docker-compose exec postgres psql -U postgres -c "create database metabolic_ninja;"
   docker-compose exec postgres psql -U postgres -c "create database model_storage;"
   docker-compose exec postgres psql -U postgres -c "create database warehouse;"
+  docker-compose exec postgres psql -U postgres -c "create database designs;"
   docker-compose run --rm iam flask db upgrade
   docker-compose run --rm map-storage flask db upgrade
   docker-compose run --rm metabolic-ninja flask db upgrade
   docker-compose run --rm model-storage flask db upgrade
   docker-compose run --rm warehouse flask db upgrade
-  docker-compose stop
+  docker-compose run --rm design-storage flask db upgrade
 
   echo
   echo "caffeine (8/8): creating demo user"
   docker-compose run --rm iam python -c "from iam.models import User, db; from iam.app import app, init_app; init_app(app, db); app.app_context().push(); user = User(email='demo@demo'); user.set_password('demo'); db.session.add(user); db.session.commit()"
+  docker-compose stop
 
   echo
   echo "All done!"
