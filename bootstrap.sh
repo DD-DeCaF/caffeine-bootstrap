@@ -36,7 +36,7 @@ elif [ "$1" = "init" ]; then
   echo
   echo "Press enter to start, or ctrl+c to abort."
   read
-  
+
   echo
   echo "caffeine (1/8): cloning git repositories"
   NPM_SERVICES="caffeine"
@@ -71,16 +71,16 @@ elif [ "$1" = "init" ]; then
   echo
   echo "caffeine (6/8): generating iam keys"
   docker-compose run --rm iam ssh-keygen -t rsa -b 2048 -f keys/rsa -N ""
-  
+
   echo
   echo "caffeine (7/8): creating databases"
   docker-compose up -d postgres
-	./iam/scripts/wait_for_postgres.sh
-	docker-compose exec postgres psql -U postgres -c "create database iam;"
-	docker-compose exec postgres psql -U postgres -c "create database maps;"
-	docker-compose exec postgres psql -U postgres -c "create database metabolic_ninja;"
-	docker-compose exec postgres psql -U postgres -c "create database model_storage;"
-	docker-compose exec postgres psql -U postgres -c "create database warehouse;"
+  ./iam/scripts/wait_for_postgres.sh
+  docker-compose exec postgres psql -U postgres -c "create database iam;"
+  docker-compose exec postgres psql -U postgres -c "create database maps;"
+  docker-compose exec postgres psql -U postgres -c "create database metabolic_ninja;"
+  docker-compose exec postgres psql -U postgres -c "create database model_storage;"
+  docker-compose exec postgres psql -U postgres -c "create database warehouse;"
   docker-compose run --rm iam flask db upgrade
   docker-compose run --rm map-storage flask db upgrade
   docker-compose run --rm metabolic-ninja flask db upgrade
