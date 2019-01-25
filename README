@@ -23,7 +23,7 @@ INSTALLATION
 
 USAGE
 
-  To run the platform, first start the services, then run the caffeine frontend:
+  To run the platform, start the services with docker-compose:
 
     docker-compose up
 
