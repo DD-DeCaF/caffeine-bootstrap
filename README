@@ -1,7 +1,7 @@
 PREREQUISITES
 
   You need docker, docker-compose, node, and npm to run the platform.
-  In addition, you need cplex, which must be place at:
+  In addition, you need cplex, which must be placed in:
   modeling-base/cplex_128.tar.gz
   To make sure all prerequisites are satisifed, run:
 
