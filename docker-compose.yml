@@ -171,7 +171,7 @@ services:
     build:
       context: warehouse
       dockerfile: Dockerfile
-    image: dddecaf/warehouse:demo
+    image: gcr.io/dd-decaf-cfbf6/warehouse:demo
     depends_on:
       - postgres
       - iam
@@ -199,7 +199,7 @@ services:
     build:
       context: design-storage
       dockerfile: Dockerfile
-    image: dddecaf/design-storage:demo
+    image: gcr.io/dd-decaf-cfbf6/design-storage:demo
     depends_on:
        - postgres
     ports:
