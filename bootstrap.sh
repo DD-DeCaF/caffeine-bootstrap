@@ -12,8 +12,6 @@ elif [ "$1" = "check" ]; then
   [ "" != "$(which git)" ] && echo "git: ok"
   [ "" != "$(which docker)" ] && echo "docker: ok"
   [ "" != "$(which docker-compose)" ] && echo "docker-compose: ok"
-  [ "" != "$(which node)" ] && echo "node: ok"
-  [ "" != "$(which npm)" ] && echo "npm: ok"
 
   if [ -f "modeling-base/cplex_128.tar.gz" ]; then
     echo "modeling-base/cplex_128.tar.gz: ok"
@@ -26,7 +24,6 @@ elif [ "$1" = "init" ]; then
   echo "Welcome! This init script will perform the following actions:"
   echo
   echo "  * clone git repositories for all required services"
-  echo "  * install npm packages"
   echo "  * build docker images"
   echo "  * create empty local databases"
   echo "  * create a demo user"
@@ -39,26 +36,9 @@ elif [ "$1" = "init" ]; then
 
   echo
   echo "caffeine (1/8): cloning git repositories"
-  NPM_SERVICES="caffeine"
-  DOCKER_SERVICES="iam map-storage metabolic-ninja model model-storage warehouse design-storage"
-  SERVICES="${NPM_SERVICES} ${DOCKER_SERVICES}"
-  for SERVICE in ${SERVICES}; do
+  for SERVICE in "iam map-storage metabolic-ninja model model-storage warehouse design-storage"; do
     git clone https://github.com/dd-decaf/${SERVICE}
   done
-
-  echo
-  echo "caffeine (2/8): installing npm packages"
-  pushd caffeine
-  npm install
-  popd
-
-  echo
-  echo "caffeine (3/8): building frontend distribution"
-  cp -v environment.ts caffeine/src/environments/
-  cp -v environment.staging.ts caffeine/src/environments/
-  pushd caffeine
-  npm run build
-  popd
 
   echo
   echo "caffeine (4/8): building modeling base image"

@@ -1,6 +1,6 @@
 PREREQUISITES
 
-  You need docker, docker-compose, node, and npm to run the platform.
+  You need git, docker and docker-compose to run the platform.
   In addition, you need cplex, which must be placed in:
   modeling-base/cplex_128.tar.gz
   To make sure all prerequisites are satisifed, run:
@@ -12,7 +12,6 @@ INSTALLATION
   Use the installation script, which will:
     * load the modeling base docker image
     * clone git repositories for all required services
-    * install npm packages
     * build docker images
     * create empty local databases
     * create a demo user
