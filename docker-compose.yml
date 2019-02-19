@@ -1,9 +1,7 @@
 version: "3.2"
 services:
   caffeine:
-    image: nginx
-    volumes:
-      - "./caffeine/dist:/usr/share/nginx/html:ro"
+    image: dddecaf/caffeine-local:latest
     ports:
       - "4200:80"
 
