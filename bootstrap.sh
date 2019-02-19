@@ -36,7 +36,8 @@ elif [ "$1" = "init" ]; then
 
   echo
   echo "caffeine (1/8): cloning git repositories"
-  for SERVICE in "iam map-storage metabolic-ninja model model-storage warehouse design-storage"; do
+  SERVICES="iam map-storage metabolic-ninja model model-storage warehouse design-storage"
+  for SERVICE in $SERVICES; do
     git clone https://github.com/dd-decaf/${SERVICE}
   done
 
