@@ -218,6 +218,37 @@ services:
       - IAM_API=http://iam:8000
     command: gunicorn -c gunicorn.py design_storage.wsgi:app
 
+  id-mapper:
+    build:
+      context: id-mapper
+      dockerfile: Dockerfile
+    image: gcr.io/dd-decaf-cfbf6/id-mapper:demo
+    ports:
+      - "8008:8000"
+    depends_on:
+      - neo4j
+    volumes:
+      - "./id-mapper:/app"
+    environment:
+      - ENVIRONMENT=development
+      - FLASK_APP=src/id_mapper/wsgi.py
+      - SCRIPT_NAME=
+      - ALLOWED_ORIGINS=http://localhost:4200
+      - SENTRY_DSN=
+      - ID_MAPPER_API=http://neo4j
+      - ID_MAPPER_PORT=7474
+      - ID_MAPPER_PASSWORD=1
+      - ID_MAPPER_USER=neo4j
+    command: gunicorn -c gunicorn.py id_mapper.wsgi:app
+
+  neo4j:
+    image: neo4j:3.1
+    ports:
+      - 7474:7474
+      - 7687:7687
+    environment:
+      - NEO4J_AUTH=neo4j/1
+
   postgres:
     image: postgres:9.6-alpine
 
