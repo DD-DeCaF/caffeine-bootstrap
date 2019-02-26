@@ -2,6 +2,8 @@
 
 set -eu
 
+SERVICES="iam map-storage metabolic-ninja model model-storage warehouse design-storage id-mapper"
+
 if [ $# != 1 ]; then
 
   echo "Please read the README"
@@ -36,7 +38,6 @@ elif [ "$1" = "init" ]; then
 
   echo
   echo "caffeine (1/8): cloning git repositories"
-  SERVICES="iam map-storage metabolic-ninja model model-storage warehouse design-storage id-mapper"
   for SERVICE in $SERVICES; do
     git clone https://github.com/dd-decaf/${SERVICE}
   done
@@ -87,5 +88,12 @@ elif [ "$1" = "init" ]; then
   echo
   echo "All done!"
   echo "You may authenticate on the platform with email 'demo@demo' and password 'demo'."
+
+elif [ "$1" = "clean" ]; then
+
+  docker-compose down -v
+  for SERVICE in $SERVICES; do
+    rm -rfv ${SERVICE}
+  done
 
 fi

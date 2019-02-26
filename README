@@ -31,3 +31,12 @@ USAGE
 
     Email: demo@demo
     Password: demo
+
+UPDATES
+
+  The init script works only on a clean installation. To update the
+  installation, repos and docker volumes must be deleted before re-running init.
+  To do this, run:
+
+  NOTE: This will delete all uploaded data on the platform.
+  ./bootstrap.sh clean
