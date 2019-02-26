@@ -35,30 +35,30 @@ elif [ "$1" = "init" ]; then
   read
 
   echo
-  echo "caffeine (1/7): cloning git repositories"
+  echo "caffeine (1/8): cloning git repositories"
   SERVICES="iam map-storage metabolic-ninja model model-storage warehouse design-storage id-mapper"
   for SERVICE in $SERVICES; do
     git clone https://github.com/dd-decaf/${SERVICE}
   done
 
   echo
-  echo "caffeine (2/7): pulling caffeine image"
+  echo "caffeine (2/8): pulling caffeine image"
   docker pull dddecaf/caffeine-local:latest
 
   echo
-  echo "caffeine (3/7): building modeling base image"
+  echo "caffeine (3/8): building modeling base image"
   docker build -t gcr.io/dd-decaf-cfbf6/modeling-base:master modeling-base
 
   echo
-  echo "caffeine (4/7): building services (this will take a few minutes)"
+  echo "caffeine (4/8): building services (this will take a few minutes)"
   docker-compose build
 
   echo
-  echo "caffeine (5/7): generating iam keys"
+  echo "caffeine (5/8): generating iam keys"
   docker-compose run --rm iam ssh-keygen -t rsa -b 2048 -f keys/rsa -N ""
 
   echo
-  echo "caffeine (6/7): creating databases"
+  echo "caffeine (6/8): creating databases"
   docker-compose up -d postgres
   ./iam/scripts/wait_for_postgres.sh
   docker-compose exec postgres psql -U postgres -c "create database iam;"
@@ -75,7 +75,12 @@ elif [ "$1" = "init" ]; then
   docker-compose run --rm design-storage flask db upgrade
 
   echo
-  echo "caffeine (7/7): creating demo user"
+  echo "caffeine (7/8): populating id-mapper graph db"
+  docker-compose up -d neo4j
+  docker-compose exec neo4j neo4j-admin load --from=/dump/id-mapper.dump
+
+  echo
+  echo "caffeine (8/8): creating demo user"
   docker-compose run --rm iam python -c "from iam.models import User, db; from iam.app import app, init_app; init_app(app, db); app.app_context().push(); user = User(email='demo@demo'); user.set_password('demo'); db.session.add(user); db.session.commit()"
   docker-compose stop
 
