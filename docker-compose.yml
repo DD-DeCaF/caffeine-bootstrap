@@ -91,6 +91,7 @@ services:
     - POSTGRES_PASS=
     - IAM_API=http://iam:8000
     - WAREHOUSE_API=http://warehouse:8000
+    - WORKER_CONCURRENCY=1
     command: gunicorn -c gunicorn.py metabolic_ninja.wsgi:app
 
   metabolic-ninja-worker:
@@ -108,6 +109,7 @@ services:
     - POSTGRES_USERNAME=postgres
     - POSTGRES_PASS=
     - C_FORCE_ROOT=1
+    - WORKER_CONCURRENCY=1
     command: celery -A metabolic_ninja.tasks worker --loglevel=info
 
   model:
