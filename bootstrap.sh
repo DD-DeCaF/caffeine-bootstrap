@@ -39,6 +39,9 @@ elif [ "$1" = "init" ]; then
   echo
   echo "caffeine (1/8): cloning git repositories"
   for SERVICE in $SERVICES; do
+    if [ -d "${SERVICE}" ]; then
+      rm -rfv ${SERVICE}
+    fi
     git clone https://github.com/dd-decaf/${SERVICE}
   done
 
@@ -60,6 +63,7 @@ elif [ "$1" = "init" ]; then
 
   echo
   echo "caffeine (6/8): creating databases"
+  docker-compose down -v
   docker-compose up -d postgres
   ./iam/scripts/wait_for_postgres.sh
   docker-compose exec postgres psql -U postgres -c "create database iam;"
@@ -88,12 +92,5 @@ elif [ "$1" = "init" ]; then
   echo
   echo "All done!"
   echo "You may authenticate on the platform with email 'demo@demo' and password 'demo'."
-
-elif [ "$1" = "clean" ]; then
-
-  docker-compose down -v
-  for SERVICE in $SERVICES; do
-    rm -rfv ${SERVICE}
-  done
 
 fi
