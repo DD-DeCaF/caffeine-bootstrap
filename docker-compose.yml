@@ -90,6 +90,7 @@ services:
     - POSTGRES_USERNAME=postgres
     - POSTGRES_PASS=
     - IAM_API=http://iam:8000
+    - WAREHOUSE_API=http://warehouse:8000
     command: gunicorn -c gunicorn.py metabolic_ninja.wsgi:app
 
   metabolic-ninja-worker:
