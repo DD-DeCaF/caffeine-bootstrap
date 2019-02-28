@@ -86,7 +86,7 @@ elif [ "$1" = "init" ]; then
 
   echo
   echo "caffeine (8/8): creating demo user"
-  docker-compose run --rm iam python -c "from iam.models import User, db; from iam.app import app, init_app; init_app(app, db); app.app_context().push(); user = User(email='demo@demo'); user.set_password('demo'); db.session.add(user); db.session.commit()"
+  docker-compose run --rm -v "$(pwd):/bootstrap" iam python /bootstrap/generate-demo-users.py
   docker-compose stop
 
   echo
