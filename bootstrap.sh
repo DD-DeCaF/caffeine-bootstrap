@@ -91,6 +91,6 @@ elif [ "$1" = "init" ]; then
 
   echo
   echo "All done!"
-  echo "You may authenticate on the platform with email 'demo@demo' and password 'demo'."
+  echo "You may authenticate on the platform with email 'demo[0-39]@demo' (where [0-39] indicates a number in the range 0 to 39) and password 'demo'."
 
 fi

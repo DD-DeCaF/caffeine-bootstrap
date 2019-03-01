@@ -27,16 +27,7 @@ USAGE
     docker-compose up
 
   When the server is ready, open your browser on http://localhost:4200/
-  To authenticate, you may login with the demo user:
+  To authenticate, you may login with one of 40 demo user accounts:
 
-    Email: demo@demo
+    Email: demo[0-39]@demo (where [0-39] is a number in the range 0 to 39)
     Password: demo
-
-UPDATES
-
-  The init script works only on a clean installation. To update the
-  installation, repos and docker volumes must be deleted before re-running init.
-  To do this, run:
-
-  NOTE: This will delete all uploaded data on the platform.
-  ./bootstrap.sh clean
