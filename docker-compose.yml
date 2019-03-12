@@ -4,6 +4,7 @@ services:
     image: dddecaf/caffeine-local:latest
     ports:
       - "4200:80"
+    restart: always
 
   iam:
     build:
@@ -41,6 +42,7 @@ services:
       - FIREBASE_PRIVATE_KEY=
       - prometheus_multiproc_dir=/prometheus-client
     command: gunicorn -c gunicorn.py iam.wsgi:app
+    restart: always
 
   map-storage:
     build:
@@ -62,6 +64,7 @@ services:
       - SENTRY_DSN=
       - IAM_API=http://iam:8000
     command: gunicorn -c gunicorn.py map_storage.wsgi:app
+    restart: always
 
   metabolic-ninja:
     build:
@@ -93,6 +96,7 @@ services:
     - WAREHOUSE_API=http://warehouse:8000
     - WORKER_CONCURRENCY=1
     command: gunicorn -c gunicorn.py metabolic_ninja.wsgi:app
+    restart: always
 
   metabolic-ninja-worker:
     image: gcr.io/dd-decaf-cfbf6/metabolic-ninja:demo
@@ -111,6 +115,7 @@ services:
     - C_FORCE_ROOT=1
     - WORKER_CONCURRENCY=1
     command: celery -A metabolic_ninja.tasks worker --loglevel=info
+    restart: always
 
   model:
     build:
@@ -141,6 +146,7 @@ services:
       - type: tmpfs
         target: "/prometheus-client"
     command: gunicorn -c gunicorn.py model.wsgi:app
+    restart: always
 
   model-storage:
     build:
@@ -167,6 +173,7 @@ services:
       - POSTGRES_PASS=
       - IAM_API=http://iam:8000
     command: gunicorn -c gunicorn.py model_storage.wsgi:app
+    restart: always
 
   warehouse:
     build:
@@ -195,6 +202,7 @@ services:
       - BASIC_AUTH_PASSWORD=admin
       - IAM_API=http://iam:8000
     command: ["/bin/sh","-c","FLASK_APP=src/warehouse/wsgi.py flask db upgrade && gunicorn -c gunicorn.py warehouse.wsgi:app"]
+    restart: always
 
   design-storage:
     build:
@@ -220,6 +228,7 @@ services:
       - POSTGRES_PASS=
       - IAM_API=http://iam:8000
     command: gunicorn -c gunicorn.py design_storage.wsgi:app
+    restart: always
 
   id-mapper:
     build:
@@ -243,6 +252,7 @@ services:
       - ID_MAPPER_PASSWORD=1
       - ID_MAPPER_USER=neo4j
     command: gunicorn -c gunicorn.py id_mapper.wsgi:app
+    restart: always
 
   neo4j:
     image: neo4j:3.1
@@ -253,12 +263,15 @@ services:
       - "./id-mapper-dump:/dump"
     environment:
       - NEO4J_AUTH=neo4j/1
+    restart: always
 
   postgres:
     image: postgres:9.6-alpine
+    restart: always
 
   redis:
     image: redis
     ports:
     - "6379:6379"
     command: redis-server --appendonly yes
+    restart: always
