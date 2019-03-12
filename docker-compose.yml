@@ -102,6 +102,7 @@ services:
     image: gcr.io/dd-decaf-cfbf6/metabolic-ninja:demo
     depends_on:
     - redis
+    - iam
     volumes:
     - "./metabolic-ninja:/app"
     environment:
@@ -211,6 +212,7 @@ services:
     image: gcr.io/dd-decaf-cfbf6/design-storage:demo
     depends_on:
        - postgres
+       - iam
     ports:
       - "8007:8000"
     volumes:
