@@ -221,7 +221,7 @@ services:
       - ENVIRONMENT=development
       - FLASK_APP=src/design_storage/wsgi.py
       - SCRIPT_NAME=
-      - ALLOWED_ORIGINS=http://localhost:4200
+      - ALLOWED_ORIGINS=*
       - SENTRY_DSN=
       - POSTGRES_HOST=postgres
       - POSTGRES_PORT=5432
@@ -247,7 +247,7 @@ services:
       - ENVIRONMENT=development
       - FLASK_APP=src/id_mapper/wsgi.py
       - SCRIPT_NAME=
-      - ALLOWED_ORIGINS=http://localhost:4200
+      - ALLOWED_ORIGINS=*
       - SENTRY_DSN=
       - ID_MAPPER_API=http://neo4j
       - ID_MAPPER_PORT=7474
