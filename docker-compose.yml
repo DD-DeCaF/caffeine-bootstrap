@@ -1,7 +1,7 @@
 version: "3.2"
 services:
   caffeine:
-    image: dddecaf/caffeine-local:latest
+    image: dddecaf/caffeine-vue-demo:latest
     ports:
       - "4200:80"
     restart: always
@@ -255,6 +255,22 @@ services:
       - ID_MAPPER_USER=neo4j
     command: gunicorn -c gunicorn.py id_mapper.wsgi:app
     restart: always
+
+  metanetx:
+    build:
+      context: metanetx
+      dockerfile: Dockerfile
+    image: gcr.io/dd-decaf-cfbf6/metanetx:demo
+    ports:
+      - "8009:8000"
+    volumes:
+      - "./metanetx:/app"
+    environment:
+      - ENVIRONMENT=development
+      - FLASK_APP=src/metanetx/wsgi.py
+      - SCRIPT_NAME=${SCRIPT_NAME}
+      - ALLOWED_ORIGINS=*
+    command: gunicorn -c gunicorn.py --preload metanetx.wsgi:app  # Override preload setting in development environment
 
   neo4j:
     image: neo4j:3.1

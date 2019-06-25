@@ -2,7 +2,7 @@
 
 set -eu
 
-SERVICES="iam map-storage metabolic-ninja model model-storage warehouse design-storage id-mapper"
+SERVICES="iam map-storage metabolic-ninja model model-storage warehouse design-storage id-mapper metanetx"
 
 if [ $# != 1 ]; then
 
@@ -47,7 +47,7 @@ elif [ "$1" = "init" ]; then
 
   echo
   echo "caffeine (2/8): pulling caffeine image"
-  docker pull dddecaf/caffeine-local:latest
+  docker pull dddecaf/caffeine-vue-demo:latest
 
   echo
   echo "caffeine (3/8): building modeling base image"

@@ -31,3 +31,8 @@ USAGE
 
     Email: demo[0-39]@demo (where [0-39] is a number in the range 0 to 39)
     Password: demo
+
+SETUP WITHOUT INTERNET ACCESS
+
+S
+    docker save -o docker-images.tar $(docker-compose config | awk '{if ($1 == "image:") print $2;}' ORS=" ")
