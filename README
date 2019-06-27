@@ -45,4 +45,6 @@ to the server without internet access and load them with
 
     gunzip -c caffeine-images.tar.gz | docker load
 
-Then proceed to the USAGE section above.
+After loading the images, manually run lines 62-90 in `boostrap.sh`
+to populate databases and create demo accounts. Then proceed to
+the USAGE section above.
