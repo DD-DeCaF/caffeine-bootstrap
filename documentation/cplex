@@ -1,0 +1,10 @@
+Caffeine makes heavy use of the CPLEX Optimizer. Without it, certain features
+may run very slow.
+
+We cannot bundle the CPLEX package, so you need to manually provide the solver
+which we will integrate during installation. Place your cplex file in:
+
+  modeling-base/cplex_128.tar.gz
+
+If you are unsure about the format of that file, please get in touch.
+Learn more at https://www.ibm.com/dk-en/analytics/cplex-optimizer

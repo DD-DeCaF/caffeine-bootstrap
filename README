@@ -1,47 +1,13 @@
-PREREQUISITES
+Welcome to Caffeine Bootstrap!
 
-  You need git, docker and docker-compose to run the platform.
-  In addition, you need cplex, which must be placed in:
-  modeling-base/cplex_128.tar.gz
-  To make sure all prerequisites are satisifed, run:
+For a short description of the bootstrap version of Caffine, see:
+  documentation/the-bootstrap-platform
 
-  ./bootstrap.sh check
+For a how-to guide on how to install the platform, check out one of:
+  documentation/installation
+  documentation/installation-without-internet
 
-INSTALLATION
+Please don't hesitate to get in touch if you have any questions.
 
-  Use the installation script, which will:
-    * load the modeling base docker image
-    * clone git repositories for all required services
-    * build docker images
-    * create empty local databases
-    * create a demo user
-  This may take a while (expect 10-15 minutes), depending on your bandwidth and
-  processing power. Run the installation script with:
-
-  ./bootstrap.sh init
-
-USAGE
-
-  To run the platform, start the services with docker-compose:
-
-    docker-compose up
-
-  When the server is ready, open your browser on http://localhost:4200/
-  To authenticate, you may login with one of 40 demo user accounts:
-
-    Email: demo[0-39]@demo (where [0-39] is a number in the range 0 to 39)
-    Password: demo
-
-SETUP WITHOUT INTERNET ACCESS
-
-  After following the steps in INSTALLATION above on a machine with
-  internet access, obtain a gzipped tarball of all images by running
-  `scripts/tarball-images.sh`. Alternatively, request it from the
-  Caffeine developers. Move the resulting `caffeine-images.tar.gz`
-  to the server without internet access and load them with
-
-    gunzip -c caffeine-images.tar.gz | docker load
-
-  After loading the images, manually run lines 62-90 in `boostrap.sh`
-  to populate databases and create demo accounts. Then proceed to
-  the USAGE section above.
+Thank you for trying out our platform!
+- Niko, Moritz, Christian & Ali
