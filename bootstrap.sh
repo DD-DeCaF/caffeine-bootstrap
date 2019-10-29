@@ -2,7 +2,7 @@
 
 set -eu
 
-SERVICES="iam map-storage metabolic-ninja model model-storage warehouse design-storage id-mapper metanetx"
+SERVICES="iam map-storage metabolic-ninja simulations model-storage warehouse design-storage id-mapper metanetx"
 
 if [ $# != 1 ]; then
 
@@ -85,7 +85,7 @@ elif [ "$1" = "init" ]; then
   docker-compose exec neo4j neo4j-admin load --from=/dump/id-mapper.dump
 
   echo
-  echo "caffeine (8/8): creating demo user"
+  echo "caffeine (8/8): creating demo users"
   docker-compose run --rm -v "$(pwd):/bootstrap" iam python /bootstrap/generate-demo-users.py
   docker-compose stop
 

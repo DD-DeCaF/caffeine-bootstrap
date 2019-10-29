@@ -10,7 +10,7 @@ services:
     build:
       context: iam
       dockerfile: Dockerfile
-    image: gcr.io/dd-decaf-cfbf6/iam:demo
+    image: gcr.io/dd-decaf-cfbf6/iam:latest
     ports:
       - "8001:8000"
     volumes:
@@ -48,7 +48,7 @@ services:
     build:
       context: map-storage
       dockerfile: Dockerfile
-    image: gcr.io/dd-decaf-cfbf6/maps:demo
+    image: gcr.io/dd-decaf-cfbf6/maps:latest
     depends_on:
       - postgres
       - iam
@@ -63,6 +63,11 @@ services:
       - ALLOWED_ORIGINS=*
       - SENTRY_DSN=
       - IAM_API=http://iam:8000
+      - POSTGRES_HOST=postgres
+      - POSTGRES_PORT=5432
+      - POSTGRES_DB_NAME=maps
+      - POSTGRES_USERNAME=postgres
+      - POSTGRES_PASS=
     command: gunicorn -c gunicorn.py map_storage.wsgi:app
     restart: always
 
@@ -70,11 +75,11 @@ services:
     build:
       context: metabolic-ninja
       dockerfile: Dockerfile
-    image: gcr.io/dd-decaf-cfbf6/metabolic-ninja:demo
+    image: gcr.io/dd-decaf-cfbf6/metabolic-ninja:latest
     depends_on:
-    - redis
     - postgres
     - iam
+    - rabbitmq
     ports:
     - "8003:8000"
     volumes:
@@ -85,7 +90,7 @@ services:
     - SCRIPT_NAME=
     - ALLOWED_ORIGINS=*
     - SENTRY_DSN=
-    - REDIS_HOST=redis:6379
+    - RABBITMQ_HOST=rabbitmq
     - MODEL_STORAGE_API=http://model-storage:8000
     - POSTGRES_HOST=postgres
     - POSTGRES_PORT=5432
@@ -94,39 +99,36 @@ services:
     - POSTGRES_PASS=
     - IAM_API=http://iam:8000
     - WAREHOUSE_API=http://warehouse:8000
-    - WORKER_CONCURRENCY=1
     command: gunicorn -c gunicorn.py metabolic_ninja.wsgi:app
     restart: always
 
   metabolic-ninja-worker:
-    image: gcr.io/dd-decaf-cfbf6/metabolic-ninja:demo
+    image: gcr.io/dd-decaf-cfbf6/metabolic-ninja:latest
     depends_on:
-    - redis
+    - rabbitmq
     - iam
     volumes:
     - "./metabolic-ninja:/app"
     environment:
     - SENTRY_DSN=
-    - REDIS_HOST=redis:6379
+    - RABBITMQ_HOST=rabbitmq
     - POSTGRES_HOST=postgres
     - POSTGRES_PORT=5432
     - POSTGRES_DB_NAME=metabolic_ninja
     - POSTGRES_USERNAME=postgres
     - POSTGRES_PASS=
-    - C_FORCE_ROOT=1
-    - WORKER_CONCURRENCY=1
-    command: celery -A metabolic_ninja.tasks worker --loglevel=info
-    restart: always
+    - SENDGRID_API_KEY=
+    command: python -m metabolic_ninja.worker.main
+    restart: on-failure
 
-  model:
+  simulations:
     build:
-      context: model
+      context: simulations
       dockerfile: Dockerfile
-    image: gcr.io/dd-decaf-cfbf6/model:demo
+    image: gcr.io/dd-decaf-cfbf6/simulations:latest
     ports:
       - "8004:8000"
     depends_on:
-      - redis
       - iam
     environment:
       - ENVIRONMENT=development
@@ -140,20 +142,18 @@ services:
       - ICE_USERNAME=
       - ICE_PASSWORD=
       - prometheus_multiproc_dir=/prometheus-client
-      # Disabling sympy cache prevents significant memory leaks in the cobrapy stack
-      - SYMPY_USE_CACHE=no
     volumes:
-      - ./model:/app
+      - ./simulations:/app
       - type: tmpfs
         target: "/prometheus-client"
-    command: gunicorn -c gunicorn.py model.wsgi:app
+    command: gunicorn -c gunicorn.py simulations.wsgi:app
     restart: always
 
   model-storage:
     build:
       context: model-storage
       dockerfile: Dockerfile
-    image: gcr.io/dd-decaf-cfbf6/model-storage:demo
+    image: gcr.io/dd-decaf-cfbf6/model-storage:latest
     depends_on:
       - postgres
       - iam
@@ -180,7 +180,7 @@ services:
     build:
       context: warehouse
       dockerfile: Dockerfile
-    image: gcr.io/dd-decaf-cfbf6/warehouse:demo
+    image: gcr.io/dd-decaf-cfbf6/warehouse:latest
     depends_on:
       - postgres
       - iam
@@ -199,8 +199,8 @@ services:
       - POSTGRES_DB_NAME=warehouse
       - POSTGRES_ENV_USERNAME=postgres
       - POSTGRES_ENV_PASS=
-      - BASIC_AUTH_USERNAME=admin
-      - BASIC_AUTH_PASSWORD=admin
+      - BASIC_AUTH_USERNAME=
+      - BASIC_AUTH_PASSWORD=
       - IAM_API=http://iam:8000
     command: ["/bin/sh","-c","FLASK_APP=src/warehouse/wsgi.py flask db upgrade && gunicorn -c gunicorn.py warehouse.wsgi:app"]
     restart: always
@@ -209,7 +209,7 @@ services:
     build:
       context: design-storage
       dockerfile: Dockerfile
-    image: gcr.io/dd-decaf-cfbf6/design-storage:demo
+    image: gcr.io/dd-decaf-cfbf6/design-storage:latest
     depends_on:
        - postgres
        - iam
@@ -236,7 +236,7 @@ services:
     build:
       context: id-mapper
       dockerfile: Dockerfile
-    image: gcr.io/dd-decaf-cfbf6/id-mapper:demo
+    image: gcr.io/dd-decaf-cfbf6/id-mapper:latest
     ports:
       - "8008:8000"
     depends_on:
@@ -260,7 +260,7 @@ services:
     build:
       context: metanetx
       dockerfile: Dockerfile
-    image: gcr.io/dd-decaf-cfbf6/metanetx:demo
+    image: gcr.io/dd-decaf-cfbf6/metanetx:latest
     ports:
       - "8009:8000"
     volumes:
@@ -268,9 +268,12 @@ services:
     environment:
       - ENVIRONMENT=development
       - FLASK_APP=src/metanetx/wsgi.py
-      - SCRIPT_NAME=${SCRIPT_NAME}
+      - SCRIPT_NAME=
       - ALLOWED_ORIGINS=*
-    command: gunicorn -c gunicorn.py --preload metanetx.wsgi:app  # Override preload setting in development environment
+      - SENTRY_DSN=
+    # Override preload setting in development environment to avoid timeouts
+    # while parsing the metanetx source files on startup.
+    command: gunicorn -c gunicorn.py --preload metanetx.wsgi:app
 
   neo4j:
     image: neo4j:3.1
@@ -287,9 +290,7 @@ services:
     image: postgres:9.6-alpine
     restart: always
 
-  redis:
-    image: redis
+  rabbitmq:
+    image: rabbitmq:3.7
     ports:
-    - "6379:6379"
-    command: redis-server --appendonly yes
-    restart: always
+      - "6379:6379"

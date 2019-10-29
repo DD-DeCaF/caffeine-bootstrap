@@ -7,9 +7,6 @@ PREREQUISITES
 
   ./bootstrap.sh check
 
-If you need to set up the platform on a server without internet
-access, please see SETUP WITHOUT INTERNET ACCESS below.
-
 INSTALLATION
 
   Use the installation script, which will:
@@ -37,14 +34,14 @@ USAGE
 
 SETUP WITHOUT INTERNET ACCESS
 
-After following the steps in INSTALLATION above on a machine with
-internet access, obtain a gzipped tarball of all images by running
-`scripts/tarball-images.sh`. Alternatively, request it from the
-Caffeine developers. Move the resulting `caffeine-images.tar.gz`
-to the server without internet access and load them with
+  After following the steps in INSTALLATION above on a machine with
+  internet access, obtain a gzipped tarball of all images by running
+  `scripts/tarball-images.sh`. Alternatively, request it from the
+  Caffeine developers. Move the resulting `caffeine-images.tar.gz`
+  to the server without internet access and load them with
 
     gunzip -c caffeine-images.tar.gz | docker load
 
-After loading the images, manually run lines 62-90 in `boostrap.sh`
-to populate databases and create demo accounts. Then proceed to
-the USAGE section above.
+  After loading the images, manually run lines 62-90 in `boostrap.sh`
+  to populate databases and create demo accounts. Then proceed to
+  the USAGE section above.
