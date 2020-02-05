@@ -4,20 +4,13 @@ FROM dddecaf/wsgi-base:debian
 # optlang. Disable it by default.
 ENV SYMPY_USE_CACHE=no
 
-# CPLEX is provided externally; see the README
-ARG CPLEX="cplex_128.tar.gz"
-
 # Work in the /opt directory to persist the pip-compiled requirement list for
 # child images to use.
 WORKDIR /opt
 
 COPY modeling-requirements.in ./
-COPY cplex_128.tar.gz ./
 
 RUN set -eux \
-    # Install CPLEX first from the external source.
-    && pip --no-cache-dir install cplex_128/python/3.6/x86-64_linux \
-    && rm -rf cplex_128* \
     # Compile all the modeling requirements. Note that `pip-compile` will use
     # the local installation of cplex.
     && pip-compile --generate-hashes \

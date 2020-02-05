@@ -9,7 +9,3 @@
 # Modeling libraries
 cobra
 cameo
-
-# CPLEX - is installed externally, but include it to ensure pip-sync does not
-# uninstall it later.
-cplex==12.8.0.0

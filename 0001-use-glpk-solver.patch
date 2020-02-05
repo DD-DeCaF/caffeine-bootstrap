@@ -1,0 +1,15 @@
+diff --git a/simulations/src/simulations/storage.py b/simulations/src/simulations/storage.py
+index 2810084..c2a0c0c 100644
+--- a/simulations/src/simulations/storage.py
++++ b/simulations/src/simulations/storage.py
+@@ -54,8 +54,8 @@ class ModelWrapper:
+         """
+         self.id = id
+         self.model = model
+-        # Use the cplex solver for performance
+-        self.model.solver = "cplex"
++        # Force glpk to avoid using the promotional cplex version
++        self.model.solver = "glpk"
+         self.project_id = project_id
+         self.organism_id = organism_id
+         self.biomass_reaction = biomass_reaction

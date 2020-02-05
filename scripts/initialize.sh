@@ -33,3 +33,7 @@ echo
 echo "caffeine: creating demo users"
 docker-compose run --rm -v "$(pwd)/scripts:/bootstrap" iam python /bootstrap/generate-demo-users.py
 docker-compose stop
+
+echo
+echo "caffeine: patching simulations service to remove cplex dependency"
+git apply --verbose 0001-use-glpk-solver.patch
