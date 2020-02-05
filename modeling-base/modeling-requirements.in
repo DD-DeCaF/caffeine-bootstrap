@@ -1,0 +1,15 @@
+# Include the base requirements, but NOT the pre-compiled constraints. If there
+# is a reason to do re-use those, the following incompatibility (and possibly
+# more) in the resolved dependencies would have to be adressed:
+#   pytest==5.2.2 (from -r /opt/base-requirements.txt (line 297))
+#   pytest<5,>=4.0.1 (from escher==1.7.3->cameo==0.11.15->-r modeling-requirements.in (line 7))
+#   pytest>=3.6 (from pytest-cov==2.8.1->-r /opt/base-requirements.txt (line 294))
+-r /opt/base-requirements.in
+
+# Modeling libraries
+cobra
+cameo
+
+# CPLEX - is installed externally, but include it to ensure pip-sync does not
+# uninstall it later.
+cplex==12.8.0.0
