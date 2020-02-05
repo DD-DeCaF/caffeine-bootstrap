@@ -4,7 +4,7 @@ set -eu
 
 echo
 echo "caffeine: generating iam keys"
-docker-compose run --rm iam ssh-keygen -t rsa -b 2048 -f keys/rsa -N ""
+docker-compose run --rm iam ssh-keygen -t rsa -b 2048 -f keys/rsa -N "" -m PEM
 
 echo
 echo "caffeine: creating databases"
