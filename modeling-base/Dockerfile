@@ -16,6 +16,7 @@ COPY cplex_128.tar.gz ./
 
 RUN set -eux \
     # Install CPLEX first from the external source.
+    && tar -xzf "${CPLEX}" \
     && pip --no-cache-dir install cplex_128/python/3.6/x86-64_linux \
     && rm -rf cplex_128* \
     # Compile all the modeling requirements. Note that `pip-compile` will use
