@@ -21,7 +21,7 @@ RUN set -eux \
     && rm -rf cplex_128* \
     # Compile all the modeling requirements. Note that `pip-compile` will use
     # the local installation of cplex.
-    && pip-compile --generate-hashes \
+    && pip-compile --generate-hashes --verbose \
         --output-file modeling-requirements.txt modeling-requirements.in \
     # Pre-install the compiled requirements to save some build time for child
     # images.
