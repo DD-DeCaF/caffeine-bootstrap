@@ -12,5 +12,5 @@ modeling-base/cplex_128.tar.gz
 ```
 
 If you are unsure about the format of that file, [please get in
-touch](mailto:niso@dtu.dk?subject=Caffeine CPLEX Archive Format).
+touch](mailto:niso@dtu.dk?subject=Caffeine%20CPLEX%20Archive%20Format).
 Learn more at https://www.ibm.com/dk-en/analytics/cplex-optimizer.
