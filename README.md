@@ -8,8 +8,9 @@ guide](documentation/installation.md). Or the separate [instructions for
 installation on a server without internet
 connection](documentation/installation-without-internet.md).
 
-Please don't hesitate to [get in touch](mailto:niso@dtu.dk?subject=Caffeine
-On-Premise Installation) if you have any questions.
+Please don't hesitate to [get in
+touch](mailto:niso@dtu.dk?subject=Caffeine%20On-Premise%20Installation) if you
+have any questions.
 
 Thank you for trying out our platform!
 - Niko, Moritz, Christian & Ali
