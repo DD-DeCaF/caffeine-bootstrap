@@ -14,6 +14,7 @@ for SERVICE in $SERVICES; do
   if [ -d "${SERVICE}" ]; then
     cd "${SERVICE}"
     branch=$(get_default_branch)
+    git stash
     git checkout ${branch}
     git pull origin ${branch}
     cd ..
