@@ -1,12 +1,11 @@
-/caffeine/
 /design-storage/
 /iam/
 /id-mapper/
 /map-storage/
 /metabolic-ninja/
-/simulations/
-/model-storage/
-/warehouse/
-/modeling-base/cplex_128.tar.gz
 /metanetx/
+/model-storage/
+/modeling-base/
+/simulations/
+/warehouse/
 caffeine-images.tar.gz
