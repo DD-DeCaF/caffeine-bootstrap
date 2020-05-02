@@ -11,8 +11,8 @@ local += metanetx
 local += warehouse
 # Docker images depending on modeling-base that needs CPLEX.
 modeling += metabolic-ninja
-modeling += simulations
 modeling += model-storage
+modeling += simulations
 # Collect all repositories.
 repos += $(local)
 repos += $(modeling)
@@ -22,7 +22,7 @@ BUILD_DATE ?= $(shell date --utc --iso-8601=date)
 export BUILD_DATE  # Required for sub make calls.
 
 ################################################################################
-# Clean up                                                                     #
+# Clean Up                                                                     #
 ################################################################################
 
 .PHONY: clean clean-env
@@ -60,13 +60,25 @@ $(repos):
 ################################################################################
 
 ## Build all Docker images.
-install: build-local build-modeling
+install: .build/tags
 	$(info **********************************************************************)
 	$(info * NOTICE)
 	$(info **********************************************************************)
 	$(info * Installation complete. Go ahead and start the platform with: )
 	$(info *     docker-compose up --detach)
 	$(info **********************************************************************)
+
+.build/tags: build-local build-modeling
+	$(file >>.env,DESIGN_STORAGE_TAG=$(shell cat .build/DESIGN_STORAGE_TAG))
+	$(file >>.env,IAM_TAG=$(shell cat .build/IAM_TAG))
+	$(file >>.env,ID_MAPPER_TAG=$(shell cat .build/ID_MAPPER_TAG))
+	$(file >>.env,MAP_STORAGE_TAG=$(shell cat .build/MAP_STORAGE_TAG))
+	$(file >>.env,METANETX_TAG=$(shell cat .build/METANETX_TAG))
+	$(file >>.env,WAREHOUSE_TAG=$(shell cat .build/WAREHOUSE_TAG))
+	$(file >>.env,METABOLIC_NINJA_TAG=$(shell cat .build/METABOLIC_NINJA_TAG))
+	$(file >>.env,MODEL_STORAGE_TAG=$(shell cat .build/MODEL_STORAGE_TAG))
+	$(file >>.env,SIMULATIONS_TAG=$(shell cat .build/SIMULATIONS_TAG))
+	@touch .build/tags
 
 # Descend into a sub-directory which should be a git repository.
 # Parse out the default branch and current commit.
@@ -92,7 +104,7 @@ short-commit = $(shell cd "$1" \
 		&& echo "$$(git rev-parse --short HEAD)")
 
 ################################################################################
-# Build local images                                                           #
+# Build Local Images                                                           #
 ################################################################################
 
 # Build an image from a local repository and record its unique tag in a file.
@@ -128,7 +140,7 @@ build-local: .build/design-storage .build/iam .build/id-mapper .build/map-storag
 	$(call build-local-repository,$(@F))
 
 ################################################################################
-# Build modeling images                                                        #
+# Build Modeling Images                                                        #
 ################################################################################
 
 # Build a modeling image from a repository and record its unique tag in a file.
@@ -166,6 +178,10 @@ build-modeling: .build/metabolic-ninja .build/model-storage .build/simulations
 
 .build/simulations: .build/modeling-base
 	$(call build-modeling-repository,$(@F))
+
+################################################################################
+# Initialize Services                                                          #
+################################################################################
 
 ################################################################################
 # Self Documenting Commands                                                    #
