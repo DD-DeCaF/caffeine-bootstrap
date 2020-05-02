@@ -7,10 +7,7 @@ services:
     restart: always
 
   iam:
-    build:
-      context: iam
-      dockerfile: Dockerfile
-    image: gcr.io/dd-decaf-cfbf6/iam:latest
+    image: gcr.io/dd-decaf-cfbf6/iam:${IAM_TAG}
     ports:
       - "8001:8000"
     volumes:
@@ -33,7 +30,7 @@ services:
       - DB_PORT=5432
       - DB_NAME=iam
       - DB_USERNAME=postgres
-      - DB_PASSWORD=
+      - DB_PASSWORD=${POSTGRES_PASSWORD}
       - FEAT_TOGGLE_FIREBASE=
       - FIREBASE_CLIENT_CERT_URL=
       - FIREBASE_CLIENT_EMAIL=
@@ -41,14 +38,10 @@ services:
       - FIREBASE_PRIVATE_KEY_ID=
       - FIREBASE_PRIVATE_KEY=
       - prometheus_multiproc_dir=/prometheus-client
-    command: gunicorn -c gunicorn.py iam.wsgi:app
     restart: always
 
   map-storage:
-    build:
-      context: map-storage
-      dockerfile: Dockerfile
-    image: gcr.io/dd-decaf-cfbf6/maps:latest
+    image: gcr.io/dd-decaf-cfbf6/maps:${MAP_STORAGE_TAG}
     depends_on:
       - postgres
       - iam
@@ -67,15 +60,11 @@ services:
       - POSTGRES_PORT=5432
       - POSTGRES_DB_NAME=maps
       - POSTGRES_USERNAME=postgres
-      - POSTGRES_PASS=
-    command: gunicorn -c gunicorn.py map_storage.wsgi:app
+      - POSTGRES_PASS=${POSTGRES_PASSWORD}
     restart: always
 
   metabolic-ninja:
-    build:
-      context: metabolic-ninja
-      dockerfile: Dockerfile
-    image: gcr.io/dd-decaf-cfbf6/metabolic-ninja:latest
+    image: gcr.io/dd-decaf-cfbf6/metabolic-ninja:${METABOLIC_NINJA_TAG}
     depends_on:
     - postgres
     - iam
@@ -96,14 +85,13 @@ services:
     - POSTGRES_PORT=5432
     - POSTGRES_DB_NAME=metabolic_ninja
     - POSTGRES_USERNAME=postgres
-    - POSTGRES_PASS=
+    - POSTGRES_PASS=${POSTGRES_PASSWORD}
     - IAM_API=http://iam:8000
     - WAREHOUSE_API=http://warehouse:8000
-    command: gunicorn -c gunicorn.py metabolic_ninja.wsgi:app
     restart: always
 
   metabolic-ninja-worker:
-    image: gcr.io/dd-decaf-cfbf6/metabolic-ninja:latest
+    image: gcr.io/dd-decaf-cfbf6/metabolic-ninja:${METABOLIC_NINJA_TAG}
     depends_on:
     - rabbitmq
     - iam
@@ -116,16 +104,12 @@ services:
     - POSTGRES_PORT=5432
     - POSTGRES_DB_NAME=metabolic_ninja
     - POSTGRES_USERNAME=postgres
-    - POSTGRES_PASS=
+    - POSTGRES_PASS=${POSTGRES_PASSWORD}
     - SENDGRID_API_KEY=
-    command: python -m metabolic_ninja.worker.main
     restart: on-failure
 
   simulations:
-    build:
-      context: simulations
-      dockerfile: Dockerfile
-    image: gcr.io/dd-decaf-cfbf6/simulations:latest
+    image: gcr.io/dd-decaf-cfbf6/simulations:${SIMULATIONS_TAG}
     ports:
       - "8004:8000"
     depends_on:
@@ -146,14 +130,10 @@ services:
       - ./simulations:/app
       - type: tmpfs
         target: "/prometheus-client"
-    command: gunicorn -c gunicorn.py simulations.wsgi:app
     restart: always
 
   model-storage:
-    build:
-      context: model-storage
-      dockerfile: Dockerfile
-    image: gcr.io/dd-decaf-cfbf6/model-storage:latest
+    image: gcr.io/dd-decaf-cfbf6/model-storage:${MODEL_STORAGE_TAG}
     depends_on:
       - postgres
       - iam
@@ -171,16 +151,12 @@ services:
       - POSTGRES_PORT=5432
       - POSTGRES_DB_NAME=model_storage
       - POSTGRES_USERNAME=postgres
-      - POSTGRES_PASS=
+      - POSTGRES_PASS=${POSTGRES_PASSWORD}
       - IAM_API=http://iam:8000
-    command: gunicorn -c gunicorn.py model_storage.wsgi:app
     restart: always
 
   warehouse:
-    build:
-      context: warehouse
-      dockerfile: Dockerfile
-    image: gcr.io/dd-decaf-cfbf6/warehouse:latest
+    image: gcr.io/dd-decaf-cfbf6/warehouse:${WAREHOUSE_TAG}
     depends_on:
       - postgres
       - iam
@@ -198,7 +174,7 @@ services:
       - POSTGRES_PORT=5432
       - POSTGRES_DB_NAME=warehouse
       - POSTGRES_ENV_USERNAME=postgres
-      - POSTGRES_ENV_PASS=
+      - POSTGRES_ENV_PASS=${POSTGRES_PASSWORD}
       - BASIC_AUTH_USERNAME=
       - BASIC_AUTH_PASSWORD=
       - IAM_API=http://iam:8000
@@ -206,10 +182,7 @@ services:
     restart: always
 
   design-storage:
-    build:
-      context: design-storage
-      dockerfile: Dockerfile
-    image: gcr.io/dd-decaf-cfbf6/design-storage:latest
+    image: gcr.io/dd-decaf-cfbf6/design-storage:${DESIGN_STORAGE_TAG}
     depends_on:
        - postgres
        - iam
@@ -227,16 +200,12 @@ services:
       - POSTGRES_PORT=5432
       - POSTGRES_DB_NAME=designs
       - POSTGRES_USERNAME=postgres
-      - POSTGRES_PASS=
+      - POSTGRES_PASS=${POSTGRES_PASSWORD}
       - IAM_API=http://iam:8000
-    command: gunicorn -c gunicorn.py design_storage.wsgi:app
     restart: always
 
   id-mapper:
-    build:
-      context: id-mapper
-      dockerfile: Dockerfile
-    image: gcr.io/dd-decaf-cfbf6/id-mapper:latest
+    image: gcr.io/dd-decaf-cfbf6/id-mapper:${ID_MAPPER_TAG}
     ports:
       - "8008:8000"
     depends_on:
@@ -253,14 +222,10 @@ services:
       - ID_MAPPER_PORT=7474
       - ID_MAPPER_PASSWORD=1
       - ID_MAPPER_USER=neo4j
-    command: gunicorn -c gunicorn.py id_mapper.wsgi:app
     restart: always
 
   metanetx:
-    build:
-      context: metanetx
-      dockerfile: Dockerfile
-    image: gcr.io/dd-decaf-cfbf6/metanetx:latest
+    image: gcr.io/dd-decaf-cfbf6/metanetx:${METANETX_TAG}
     ports:
       - "8009:8000"
     volumes:
@@ -288,6 +253,8 @@ services:
 
   postgres:
     image: postgres:9.6-alpine
+    environment:
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
     restart: always
 
   rabbitmq:
