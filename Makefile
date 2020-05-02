@@ -117,7 +117,6 @@ $(MAKE) -C $1 build-travis > /dev/null
 @touch .build/$1
 endef
 
-## Build images depending on publicly available wsgi-base and postgres-base.
 build-local: .build/design-storage .build/iam .build/id-mapper .build/map-storage \
 	.build/metanetx .build/warehouse
 
@@ -160,7 +159,6 @@ docker build --build-arg BASE_TAG=$(BASE_TAG) \
 @touch .build/$1
 endef
 
-## Build images depending on proprietary solver in modeling-base.
 build-modeling: .build/metabolic-ninja .build/model-storage .build/simulations
 
 .build/modeling-base:
