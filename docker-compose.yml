@@ -178,7 +178,6 @@ services:
       - BASIC_AUTH_USERNAME=
       - BASIC_AUTH_PASSWORD=
       - IAM_API=http://iam:8000
-    command: ["/bin/sh","-c","FLASK_APP=src/warehouse/wsgi.py flask db upgrade && gunicorn -c gunicorn.py warehouse.wsgi:app"]
     restart: always
 
   design-storage:
