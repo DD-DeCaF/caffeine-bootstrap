@@ -184,7 +184,7 @@ build-modeling: .build/metabolic-ninja .build/model-storage .build/simulations
 ################################################################################
 
 ## Initialize all databases and services.
-initialize: .build/ssh-keys .build/databases .build/neo4j
+initialize: .build/neo4j .build/demo
 	$(info **********************************************************************)
 	$(info * NOTICE)
 	$(info **********************************************************************)
@@ -199,7 +199,7 @@ initialize: .build/ssh-keys .build/databases .build/neo4j
 	docker-compose run --rm iam ssh-keygen -t rsa -b 2048 -f keys/rsa -N "" -m PEM
 	@touch .build/ssh-keys
 
-.build/databases:
+.build/databases: .build/ssh-keys
 	$(info Creating databases...)
 	docker-compose down --volumes
 	docker-compose up --detach postgres
@@ -219,14 +219,14 @@ initialize: .build/ssh-keys .build/databases .build/neo4j
 	docker-compose stop
 	@touch .build/databases
 
-.build/neo4j:
+.build/neo4j: .build/databases
 	$(info Populating id-mapper...)
 	docker-compose up --detach neo4j
 	docker-compose exec neo4j neo4j-admin load --from=/dump/id-mapper.dump
 	docker-compose stop
 	@touch .build/neo4j
 
-.build/demo:
+.build/demo: .build/databases
 	$(info Creating demo users...)
 	docker-compose run --rm --volume="$(CURDIR)/scripts:/bootstrap" iam \
 		python /bootstrap/generate-demo-users.py
