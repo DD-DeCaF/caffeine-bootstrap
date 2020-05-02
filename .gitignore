@@ -8,4 +8,6 @@
 /modeling-base/
 /simulations/
 /warehouse/
+/.build/
 caffeine-images.tar.gz
+.env

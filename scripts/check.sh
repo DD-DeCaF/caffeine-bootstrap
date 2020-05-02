@@ -1,13 +1,9 @@
-#!/usr/bin/env bash
+#!/usr/bin/env sh
 
 set -eu
 
-[ "" != "$(which git)" ] && echo "git: ok"
-[ "" != "$(which docker)" ] && echo "docker: ok"
-[ "" != "$(which docker-compose)" ] && echo "docker-compose: ok"
-
-if [ -f "modeling-base/cplex_128.tar.gz" ]; then
-  echo "modeling-base/cplex_128.tar.gz: ok"
-else
-  echo "modeling-base/cplex_128.tar.gz: not found"
-fi
+which bash > /dev/null && echo "bash: ok" ||  echo "bash: no"
+which git > /dev/null && echo "git: ok" ||  echo "git: no"
+which docker > /dev/null && echo "docker: ok" ||  echo "docker: no"
+which docker-compose > /dev/null && echo "docker-compose: ok" || \
+    echo "docker-compose: no"
