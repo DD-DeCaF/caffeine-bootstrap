@@ -64,8 +64,8 @@ install: .build/tags
 	$(info **********************************************************************)
 	$(info * NOTICE)
 	$(info **********************************************************************)
-	$(info * Installation complete. Go ahead and start the platform with: )
-	$(info *     docker-compose up --detach)
+	$(info * Installation complete. Please run the initialization next with:)
+	$(info *     make initialize)
 	$(info **********************************************************************)
 
 .build/tags: build-local build-modeling
@@ -182,6 +182,55 @@ build-modeling: .build/metabolic-ninja .build/model-storage .build/simulations
 ################################################################################
 # Initialize Services                                                          #
 ################################################################################
+
+## Initialize all databases and services.
+initialize: .build/ssh-keys .build/databases .build/neo4j
+	$(info **********************************************************************)
+	$(info * NOTICE)
+	$(info **********************************************************************)
+	$(info * Initialization complete. Go ahead and start the platform with:)
+	$(info *     docker-compose up --detach)
+	$(info * You can inspect and follow the logs of all services with:)
+	$(info *     docker-compose logs --tail="all" --follow)
+	$(info **********************************************************************)
+
+.build/ssh-keys:
+	$(info Generating SSH key pairs...)
+	docker-compose run --rm iam ssh-keygen -t rsa -b 2048 -f keys/rsa -N "" -m PEM
+	@touch .build/ssh-keys
+
+.build/databases:
+	$(info Creating databases...)
+	docker-compose down --volumes
+	docker-compose up --detach postgres
+	./iam/scripts/wait_for_postgres.sh
+	docker-compose exec postgres psql -U postgres -c "create database iam;"
+	docker-compose exec postgres psql -U postgres -c "create database maps;"
+	docker-compose exec postgres psql -U postgres -c "create database metabolic_ninja;"
+	docker-compose exec postgres psql -U postgres -c "create database model_storage;"
+	docker-compose exec postgres psql -U postgres -c "create database warehouse;"
+	docker-compose exec postgres psql -U postgres -c "create database designs;"
+	docker-compose run --rm iam flask db upgrade
+	docker-compose run --rm map-storage flask db upgrade
+	docker-compose run --rm metabolic-ninja flask db upgrade
+	docker-compose run --rm model-storage flask db upgrade
+	docker-compose run --rm warehouse flask db upgrade
+	docker-compose run --rm design-storage flask db upgrade
+	docker-compose stop
+	@touch .build/databases
+
+.build/neo4j:
+	$(info Populating id-mapper...)
+	docker-compose up --detach neo4j
+	docker-compose exec neo4j neo4j-admin load --from=/dump/id-mapper.dump
+	docker-compose stop
+	@touch .build/neo4j
+
+.build/demo:
+	$(info Creating demo users...)
+	docker-compose run --rm --volume="$(CURDIR)/scripts:/bootstrap" iam \
+		python /bootstrap/generate-demo-users.py
+	@touch .build/demo
 
 ################################################################################
 # Self Documenting Commands                                                    #
