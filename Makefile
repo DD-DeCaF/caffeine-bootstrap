@@ -38,7 +38,7 @@ clean-env:
 ################################################################################
 
 .env:
-	$(file >.env, POSTGRES_PASSWORD=)
+	$(file >.env,POSTGRES_PASSWORD=)
 
 .PHONY: setup $(repos)
 ## Clone all repositories for local use.
@@ -59,6 +59,7 @@ $(repos):
 # Installation                                                                 #
 ################################################################################
 
+## Build all Docker images.
 install: build-local build-modeling
 	$(info **********************************************************************)
 	$(info * NOTICE)
