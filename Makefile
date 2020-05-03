@@ -68,6 +68,8 @@ setup: .env clean $(repos)
 	$(info * 1. Please copy your CPLEX archive, for example, 'cplex_128.tar.gz',)
 	$(info *    to 'modeling-base/cameo/' now.)
 	$(info * 2. Please set the POSTGRES_PASSWORD in the '.env' file.)
+	$(info * 3. Then continue with:)
+	$(info *    	make install initialize)
 	$(info **********************************************************************)
 
 $(repos):
