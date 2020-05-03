@@ -28,7 +28,17 @@ export BUILD_DATE  # Required for sub make calls.
 .PHONY: clean clean-env
 ## Clean up all build files and directories.
 clean: clean-env
+	docker-compose down --volumes
 	@if [ -d .build ]; then rm --recursive .build; fi
+	$(info **********************************************************************)
+	$(info * NOTICE)
+	$(info **********************************************************************)
+	$(info * Clean up complete.)
+	$(info * If you want to start over removing all services and)
+	$(info * ALL OF YOUR DATA, you can do so with:)
+	$(info *     docker-compose down --volumes)
+	$(info * Please go and have a cup of coffee before deciding to do so.)
+	$(info **********************************************************************)
 
 clean-env:
 	@echo "$$(head -n1 .env)" > .env
