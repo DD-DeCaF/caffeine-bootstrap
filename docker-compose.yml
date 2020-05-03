@@ -99,6 +99,7 @@ services:
     - "./metabolic-ninja:/app"
     environment:
     - ENVIRONMENT=development
+    - ALLOWED_ORIGINS=*
     - SENTRY_DSN=
     - RABBITMQ_HOST=rabbitmq
     - POSTGRES_HOST=postgres
