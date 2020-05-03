@@ -212,14 +212,17 @@ initialize: .build/neo4j .build/demo
 	$(info *     docker-compose logs --tail="all" --follow)
 	$(info **********************************************************************)
 
-.build/ssh-keys:
+.build/volumes:
+	docker-compose down --volumes
+	@touch .build/$(@F)
+
+.build/ssh-keys: .build/volumes
 	$(info Generating SSH key pairs...)
 	docker-compose run --rm iam ssh-keygen -t rsa -b 2048 -f keys/rsa -N "" -m PEM
-	@touch .build/ssh-keys
+	@touch .build/$(@F)
 
 .build/databases: .build/ssh-keys
 	$(info Creating databases...)
-	docker-compose down --volumes
 	docker-compose up --detach postgres
 	./iam/scripts/wait_for_postgres.sh
 	docker-compose exec postgres psql -U postgres -c "create database iam;"
@@ -234,19 +237,19 @@ initialize: .build/neo4j .build/demo
 	docker-compose run --rm model-storage flask db upgrade
 	docker-compose run --rm warehouse flask db upgrade
 	docker-compose run --rm design-storage flask db upgrade
-	@touch .build/databases
+	@touch .build/$(@F)
 
 .build/neo4j: .build/databases
 	$(info Populating id-mapper...)
 	docker-compose up --detach neo4j
 	docker-compose exec neo4j neo4j-admin load --from=/dump/id-mapper.dump
-	@touch .build/neo4j
+	@touch .build/$(@F)
 
 .build/demo: .build/databases
 	$(info Creating demo users...)
 	docker-compose run --rm --volume="$(CURDIR)/scripts:/bootstrap" iam \
 		python /bootstrap/generate-demo-users.py
-	@touch .build/demo
+	@touch .build/$(@F)
 
 ################################################################################
 # Self Documenting Commands                                                    #
