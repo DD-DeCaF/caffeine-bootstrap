@@ -2,35 +2,24 @@
 
 1. Prerequisites
 
-    You need git, docker, docker-compose and cplex to install and run the
-    platform (see [documentation/cplex.md](cplex.md) for more information). To
-    make sure all prerequisites are satisifed, run:
-
-    ```
-    ./scripts/check.sh
-    ```
-
-    For installation without internet, you also need gzip/gunzip.
+    Please follow the instructions of the [normal guide](installation.md) until you have
+    completed the `make install` step on a machine which **does** have internet
+    access.
 
 2. Build image tarball
 
-    Build the images and create a tarball on a machine which does have internet
-    access with:
+    Create a tarball  with:
 
     ```
     ./scripts/save-image-tarball.sh
     ```
 
-    This may take a while (expect 10-15 minutes), depending on your bandwidth
-    and processing power. We recommend you take a look at the script to
-    understand what it does.
-
     You should end up with a `caffeine-images.tar.gz` file.
 
 3. Load the images
 
-    Move the resulting `caffeine-images.tar.gz` to the server where the platform
-    will run, and load them with:
+    Move the resulting `caffeine-images.tar.gz` archive to the server where the platform
+    will run and load them with:
 
     ```
     gunzip -c caffeine-images.tar.gz | docker load
@@ -39,7 +28,7 @@
     Now initialize the services with:
 
     ```
-    ./scripts/initialize.sh
+    make initialize
     ```
 
 3. Running
@@ -47,7 +36,7 @@
     Start all services with docker-compose:
 
     ```
-    docker-compose up
+    docker-compose up --detach
     ```
 
     You may initially see "connection refused" errors or similar while services

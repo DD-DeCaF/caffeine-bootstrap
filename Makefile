@@ -55,13 +55,9 @@ clean-env:
 # Setup                                                                        #
 ################################################################################
 
-.env:
-	$(file >.env,POSTGRES_PASSWORD=)
-
 .PHONY: setup $(repos)
 ## Clone all repositories for local use.
-setup: .env clean $(repos)
-	@mkdir .build
+setup: .env clean .build $(repos)
 	$(info **********************************************************************)
 	$(info * NOTICE)
 	$(info **********************************************************************)
@@ -72,6 +68,12 @@ setup: .env clean $(repos)
 	$(info *    	make install initialize)
 	$(info **********************************************************************)
 
+.env:
+	$(file >.env,POSTGRES_PASSWORD=)
+
+.build:
+	@mkdir .build
+
 $(repos):
 	./scripts/clone_or_pull.sh "$@" > /dev/null
 
@@ -80,7 +82,7 @@ $(repos):
 ################################################################################
 
 ## Build all Docker images.
-install: .build/tags
+install: .build .env .build/tags
 	$(info **********************************************************************)
 	$(info * NOTICE)
 	$(info **********************************************************************)
@@ -202,7 +204,7 @@ build-modeling: .build/metabolic-ninja .build/model-storage .build/simulations
 ################################################################################
 
 ## Initialize all databases and services. COMPLETELY REMOVES EXISTING DATA.
-initialize: .build/neo4j .build/demo
+initialize: .build .build/neo4j .build/demo
 	$(info **********************************************************************)
 	$(info * NOTICE)
 	$(info **********************************************************************)
@@ -212,7 +214,7 @@ initialize: .build/neo4j .build/demo
 	$(info *     docker-compose logs --tail="all" --follow)
 	$(info **********************************************************************)
 
-.build/volumes:
+.build/volumes: .build
 	docker-compose down --volumes
 	@touch .build/$(@F)
 

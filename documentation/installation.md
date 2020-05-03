@@ -7,27 +7,51 @@
     make sure all prerequisites are satisifed, run:
 
     ```
-    ./scripts/check.sh
+    make check
     ```
 
 2. Installation
 
-    Run the installation script with:
+    Run the installation in multiple steps. Please note that you can run the installation 
+    in parallel using `make -j`.
+    
+    1. Create all local repositories.
 
-    ```
-    ./scripts/install.sh
-    ```
+        ```
+        make setup
+        ```
+    2. Copy your CPLEX archive to `modeling-base/cameo/`   .
+    
+    3. Build all Docker images.
 
-    This may take a while (expect 10-15 minutes), depending on your bandwidth
-    and processing power. We recommend you take a look at the script to
-    understand what it does.
+        ```
+        make install
+        ```
+       
+        This may take a while (expect 10-15 minutes), depending on your bandwidth
+        and processing power. We recommend you take a look at the `Makefile` to
+        understand what it does. Again, you can reduce the time needed through parallelization
+        but you need enough memory, too.
+    
+    4. Initialize the platform.
+    
+        ```
+        make initialize
+        ```
 
 3. Running
 
     Start all services with docker-compose:
 
     ```
-    docker-compose up
+    docker-compose up --detach
+    ```
+   
+    Optionally, you can look at the log output, too. It is a good place to spot errors.
+    Please, at the very least, make sure that all services are running with
+
+    ```
+    docker-compose ps
     ```
 
     You may initially see "connection refused" errors or similar while services
