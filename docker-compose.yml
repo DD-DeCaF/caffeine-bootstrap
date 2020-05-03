@@ -98,6 +98,7 @@ services:
     volumes:
     - "./metabolic-ninja:/app"
     environment:
+    - ENVIRONMENT=development
     - SENTRY_DSN=
     - RABBITMQ_HOST=rabbitmq
     - POSTGRES_HOST=postgres
