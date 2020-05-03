@@ -234,14 +234,12 @@ initialize: .build/neo4j .build/demo
 	docker-compose run --rm model-storage flask db upgrade
 	docker-compose run --rm warehouse flask db upgrade
 	docker-compose run --rm design-storage flask db upgrade
-	docker-compose stop
 	@touch .build/databases
 
 .build/neo4j: .build/databases
 	$(info Populating id-mapper...)
 	docker-compose up --detach neo4j
 	docker-compose exec neo4j neo4j-admin load --from=/dump/id-mapper.dump
-	docker-compose stop
 	@touch .build/neo4j
 
 .build/demo: .build/databases
