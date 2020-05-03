@@ -253,12 +253,15 @@ services:
       - 7687:7687
     volumes:
       - "./id-mapper-dump:/dump"
+      - neodata:/data
     environment:
       - NEO4J_AUTH=neo4j/1
     restart: always
 
   postgres:
     image: postgres:9.6-alpine
+    volumes:
+      - pgdata:/var/lib/postgresql/data
     environment:
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
     restart: always
@@ -267,3 +270,7 @@ services:
     image: rabbitmq:3.7
     ports:
       - "6379:6379"
+
+volumes:
+  pgdata:
+  neodata:
