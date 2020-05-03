@@ -99,14 +99,19 @@ services:
     - "./metabolic-ninja:/app"
     environment:
     - ENVIRONMENT=development
+    - FLASK_APP=src/metabolic_ninja/wsgi.py
+    - SCRIPT_NAME=
     - ALLOWED_ORIGINS=*
     - SENTRY_DSN=
     - RABBITMQ_HOST=rabbitmq
+    - MODEL_STORAGE_API=http://model-storage:8000
     - POSTGRES_HOST=postgres
     - POSTGRES_PORT=5432
     - POSTGRES_DB_NAME=metabolic_ninja
     - POSTGRES_USERNAME=postgres
     - POSTGRES_PASS=${POSTGRES_PASSWORD}
+    - IAM_API=http://iam:8000
+    - WAREHOUSE_API=http://warehouse:8000
     - SENDGRID_API_KEY=
     restart: on-failure
 
