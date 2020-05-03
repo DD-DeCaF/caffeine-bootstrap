@@ -191,7 +191,7 @@ build-modeling: .build/metabolic-ninja .build/model-storage .build/simulations
 # Initialize Services                                                          #
 ################################################################################
 
-## Initialize all databases and services.
+## Initialize all databases and services. COMPLETELY REMOVES EXISTING DATA.
 initialize: .build/neo4j .build/demo
 	$(info **********************************************************************)
 	$(info * NOTICE)
