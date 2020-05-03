@@ -133,7 +133,7 @@ $(info Building $1...)
 $(eval NAME := $(shell echo "$1" | tr '[:lower:]-' '[:upper:]_'))
 $(eval TAG := $(call build-tag,$1))
 $(file >.build/$(NAME)_TAG,$(TAG))
-$(MAKE) -C $1 build-travis > /dev/null
+$(MAKE) -C $1 build-travis
 @touch .build/$1
 endef
 
@@ -185,7 +185,7 @@ build-modeling: .build/metabolic-ninja .build/model-storage .build/simulations
 	$(info Building $(@F)...)
 	$(eval TAG := cameo_$(BUILD_DATE)_$(call short-commit,$(@F)))
 	$(file >.build/MODELING_BASE_TAG,$(TAG))
-	$(MAKE) -C $(@F) build-cameo > /dev/null
+	$(MAKE) -C $(@F) build-cameo
 	@touch .build/$(@F)
 
 .build/metabolic-ninja: .build/modeling-base
