@@ -37,7 +37,6 @@ check:
 .PHONY: clean clean-env
 ## Clean up all build files and directories.
 clean: clean-env
-	docker-compose down --volumes
 	@if [ -d .build ]; then rm --recursive .build; fi
 	$(info **********************************************************************)
 	$(info * NOTICE)
