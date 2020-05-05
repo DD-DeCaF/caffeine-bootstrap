@@ -8,6 +8,7 @@
 /modeling-base/
 /simulations/
 /warehouse/
+/cplex/
 /.build/
 caffeine-images.tar.gz
 .env

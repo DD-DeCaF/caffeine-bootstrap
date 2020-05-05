@@ -29,7 +29,13 @@ export BUILD_DATE  # Required for sub make calls.
 .PHONY: check
 ## Test that important tools are present.
 check:
-	./scripts/check.sh
+	@echo $(shell which bash > /dev/null && echo "bash: ok" ||  echo "bash: no")
+	@echo $(shell which git > /dev/null && echo "git: ok" ||  echo "git: no")
+	@echo $(shell which docker > /dev/null && echo "docker: ok" ||  echo "docker: no")
+	@echo $(shell which docker-compose > /dev/null && echo "docker-compose: ok" || \
+		echo "docker-compose: no")
+	@echo $(shell [ -f "$(shell find cplex -iname 'cplex*.tar.gz')" ] > /dev/null \
+		&& echo "CPLEX: ok" ||  echo "CPLEX: no")
 
 ################################################################################
 # Clean Up                                                                     #
@@ -58,14 +64,12 @@ clean-env:
 
 .PHONY: setup $(repos)
 ## Clone all repositories for local use.
-setup: .env clean .build $(repos)
+setup: .env clean .build $(repos) copy-cplex
 	$(info **********************************************************************)
 	$(info * NOTICE)
 	$(info **********************************************************************)
-	$(info * 1. Please copy your CPLEX archive, for example, 'cplex_128.tar.gz',)
-	$(info *    to 'modeling-base/cameo/' now.)
-	$(info * 2. Please set the POSTGRES_PASSWORD in the '.env' file.)
-	$(info * 3. Then continue with:)
+	$(info * 1. Please set the POSTGRES_PASSWORD in the '.env' file.)
+	$(info * 2. Then continue with:)
 	$(info *    	make install initialize)
 	$(info **********************************************************************)
 
@@ -78,6 +82,9 @@ setup: .env clean .build $(repos)
 $(repos):
 	./scripts/clone_or_pull.sh "$@" > /dev/null
 
+copy-cplex: modeling-base/cameo/cplex
+	cp -n "$(shell find cplex -iname 'cplex*.tar.gz')" modeling-base/cameo/cplex/
+
 ################################################################################
 # Installation                                                                 #
 ################################################################################
@@ -87,7 +94,7 @@ install: .build .env .build/tags
 	$(info **********************************************************************)
 	$(info * NOTICE)
 	$(info **********************************************************************)
-	$(info * Installation complete. Please run the initialization next with:)
+	$(info * Installation complete. Please run the initialization next, with:)
 	$(info *     make initialize)
 	$(info **********************************************************************)
 
