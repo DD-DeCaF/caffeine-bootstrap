@@ -18,7 +18,8 @@ repos += $(local)
 repos += $(modeling)
 repos += modeling-base
 # Variables for image tag components.
-BUILD_DATE ?= $(shell date --utc --iso-8601=date)
+# The date format corresponds to ISO-8601 but Unix compatible.
+BUILD_DATE ?= $(shell date -u +%Y-%m-%d)
 export BUILD_DATE  # Required for sub make calls.
 
 ################################################################################
