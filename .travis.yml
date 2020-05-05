@@ -1,0 +1,27 @@
+os:
+- linux
+- osx
+language: shell
+
+git:
+  depth: 2
+
+branches:
+  only:
+  - master
+  - add-ci
+
+services:
+- docker
+
+  #env:
+  #  global:
+
+before_install:
+- make check
+
+script:
+- date -u +%Y-%m-%d
+
+notifications:
+  email: false
