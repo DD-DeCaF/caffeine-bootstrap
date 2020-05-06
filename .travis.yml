@@ -12,6 +12,10 @@ branches:
 services:
 - docker
 
+env:
+  global:
+  - POSTGRES_PASSWORD=secret
+
 before_install:
 - make check
 - make setup
