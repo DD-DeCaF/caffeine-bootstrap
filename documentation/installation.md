@@ -2,9 +2,12 @@
 
 1. Prerequisites
 
-    You need git, docker, docker-compose and cplex to install and run the
-    platform (see [documentation/cplex.md](cplex.md) for more information). To
-    make sure all prerequisites are satisifed, run:
+    You need git, docker, docker-compose and ideally cplex to install and run
+    the platform (see [documentation/cplex.md](cplex.md) for more information).
+    As described there, please start by placing your CPLEX compressed archive
+    (`cplex_128.tar.gz`) in the `cplex/` directory.
+
+     To make sure all prerequisites are satisfied, run:
 
     ```
     make check
@@ -12,29 +15,29 @@
 
 2. Installation
 
-    Run the installation in multiple steps. Please note that you can run the installation 
-    in parallel using `make -j`.
-    
+    Run the installation in multiple steps. Please note that you can run the
+    installation in parallel using `make -j` (you may want to synchronize output
+    in that case with `-O`).
+
     1. Create all local repositories.
 
         ```
         make setup
         ```
-    2. Copy your CPLEX archive to `modeling-base/cameo/`   .
-    
-    3. Build all Docker images.
+    2. Build all Docker images.
 
         ```
         make install
         ```
-       
-        This may take a while (expect 10-15 minutes), depending on your bandwidth
-        and processing power. We recommend you take a look at the `Makefile` to
-        understand what it does. Again, you can reduce the time needed through parallelization
-        but you need enough memory, too.
-    
-    4. Initialize the platform.
-    
+
+        This may take a while (expect 10-15 minutes), depending on your
+        bandwidth and processing power. We recommend you take a look at the
+        `Makefile` to understand what it does. Again, you can reduce the time
+        needed through parallelization but you need enough memory, too.
+
+    3. Initialize the platform. Careful, this will reset all database volumes.
+        So don't run this command after using the platform for a while.
+
         ```
         make initialize
         ```
@@ -46,9 +49,10 @@
     ```
     docker-compose up --detach
     ```
-   
-    Optionally, you can look at the log output, too. It is a good place to spot errors.
-    Please, at the very least, make sure that all services are running with
+
+    Optionally, you can look at the log output, too. It is a good place to spot
+    errors.  Please, at the very least, make sure that all services are running
+    with
 
     ```
     docker-compose ps
