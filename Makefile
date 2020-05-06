@@ -21,6 +21,7 @@ repos += modeling-base
 # The date format corresponds to ISO-8601 but Unix compatible.
 BUILD_DATE ?= $(shell date -u +%Y-%m-%d)
 export BUILD_DATE  # Required for sub make calls.
+CPLEX := "$(shell find cplex -iname 'cplex*.tar.gz')"
 
 ################################################################################
 # Check                                                                        #
@@ -34,7 +35,7 @@ check:
 	@echo $(shell which docker > /dev/null && echo "docker: ok" ||  echo "docker: no")
 	@echo $(shell which docker-compose > /dev/null && echo "docker-compose: ok" || \
 		echo "docker-compose: no")
-	@echo $(shell [ -f "$(shell find cplex -iname 'cplex*.tar.gz')" ] > /dev/null \
+	@echo $(shell [ -f $(CPLEX) ] > /dev/null \
 		&& echo "CPLEX: ok" ||  echo "CPLEX: no")
 
 ################################################################################
@@ -83,7 +84,10 @@ $(repos):
 	./scripts/clone_or_pull.sh "$@" > /dev/null
 
 copy-cplex: modeling-base/cameo/cplex
-	cp -n "$(shell find cplex -iname 'cplex*.tar.gz')" modeling-base/cameo/cplex/
+	@echo $(shell [ -f $(CPLEX) ] > /dev/null \
+		&& cp -n $(CPLEX) modeling-base/cameo/cplex/ \
+		&& echo "CPLEX found." \
+		|| echo "WARNING: No CPLEX compressed archive found.")
 
 ################################################################################
 # Installation                                                                 #
