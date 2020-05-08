@@ -24,19 +24,20 @@ export BUILD_DATE  # Required for sub make calls.
 CPLEX := "$(shell find cplex -iname 'cplex*.tar.gz')"
 
 ################################################################################
+# All                                                                          #
+################################################################################
+
+## Perform a complete Caffeine installation.
+all: check setup install initialize
+
+################################################################################
 # Check                                                                        #
 ################################################################################
 
 .PHONY: check
 ## Test that important tools are present.
 check:
-	@echo $(shell which bash > /dev/null && echo "bash: ok" ||  echo "bash: no")
-	@echo $(shell which git > /dev/null && echo "git: ok" ||  echo "git: no")
-	@echo $(shell which docker > /dev/null && echo "docker: ok" ||  echo "docker: no")
-	@echo $(shell which docker-compose > /dev/null && echo "docker-compose: ok" || \
-		echo "docker-compose: no")
-	@echo $(shell [ -f $(CPLEX) ] > /dev/null \
-		&& echo "CPLEX: ok" ||  echo "CPLEX: no")
+	@./scripts/check.sh || (echo "There are missing dependencies."; exit 1)
 
 ################################################################################
 # Clean Up                                                                     #
