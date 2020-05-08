@@ -45,7 +45,7 @@ check:
 .PHONY: clean clean-env
 ## Clean up all build files and directories.
 clean: clean-env
-	@if [ -d .build ]; then rm --recursive .build; fi
+	@if [ -d .build ]; then rm -r .build; fi
 	$(info **********************************************************************)
 	$(info * NOTICE)
 	$(info **********************************************************************)
