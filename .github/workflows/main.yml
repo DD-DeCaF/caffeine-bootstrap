@@ -1,0 +1,30 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+env:
+  POSTGRES_PASSWORD: secret
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Check for the availability of all required command line tools.
+      run: make check
+    - name: Download all dependent repositories.
+      run: make setup
+    - name: Build all local Docker images.
+      run: make install
+    - name: Initialize databases.
+      run: make initialize
