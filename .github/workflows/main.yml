@@ -22,10 +22,12 @@ jobs:
     - uses: actions/checkout@v2
     - name: Check for the availability of all required command line tools.
       run: make check
-      continue-on-error: true
     - name: Download all dependent repositories.
       run: make setup -j -O
+      if: ${{ failure() || success() }}
     - name: Build all local Docker images.
       run: make install -j -O
+      if: ${{ failure() || success() }}
     - name: Initialize databases.
       run: make initialize -j -O
+      if: ${{ failure() || success() }}
