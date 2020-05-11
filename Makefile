@@ -92,7 +92,7 @@ setup: .env clean .build $(repos) copy-cplex
 $(repos):
 	./scripts/clone_or_pull.sh "$@" > /dev/null
 
-copy-cplex: modeling-base modeling-base/cameo/cplex
+copy-cplex: modeling-base
 	@echo $(shell [ -f $(CPLEX) ] > /dev/null \
 		&& cp -n $(CPLEX) modeling-base/cameo/cplex/ \
 		&& echo "CPLEX found." \
