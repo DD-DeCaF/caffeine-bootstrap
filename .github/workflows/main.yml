@@ -24,8 +24,8 @@ jobs:
       run: make check
       continue-on-error: true
     - name: Download all dependent repositories.
-      run: make setup
+      run: make setup -j -O
     - name: Build all local Docker images.
-      run: make install
+      run: make install -j -O
     - name: Initialize databases.
-      run: make initialize
+      run: make initialize -j -O
