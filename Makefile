@@ -38,6 +38,15 @@ all: check setup install initialize
 ## Test that important tools are present.
 check:
 	@./scripts/check.sh || (echo "There are missing dependencies."; exit 1)
+	$(info **********************************************************************)
+	$(info * NOTICE)
+	$(info **********************************************************************)
+	$(info * If you are only lacking CPLEX you can proceed with the installation)
+	$(info * by interactively running the following commands:)
+	$(info *     make setup install initialize)
+	$(info * Please note that the platform will use the GLPK solver and)
+	$(info * certain parts will run MUCH slower.)
+	$(info **********************************************************************)
 
 ################################################################################
 # Clean Up                                                                     #
@@ -70,8 +79,7 @@ setup: .env clean .build $(repos) copy-cplex
 	$(info **********************************************************************)
 	$(info * NOTICE)
 	$(info **********************************************************************)
-	$(info * 1. Please set the POSTGRES_PASSWORD in the '.env' file.)
-	$(info * 2. Then continue with:)
+	$(info * Please continue with:)
 	$(info *    	make install initialize)
 	$(info **********************************************************************)
 

@@ -2,10 +2,15 @@
 
 1. Prerequisites
 
-    You need git, docker, docker-compose and ideally cplex to install and run
+    You need git, docker, docker-compose and ideally CPLEX to install and run
     the platform (see [documentation/cplex.md](cplex.md) for more information).
     As described there, please start by placing your CPLEX compressed archive
     (`cplex_128.tar.gz`) in the `cplex/` directory.
+
+     Please also set an administrative password for the database server.  The
+     username is automatically `postgres`. You can either define an environment
+     variable `POSTGRES_PASSWORD` (`export POSTGRES_PASSWORD=...` on Linux and
+     MacOS) or write it to a `.env` file (`POSTGRES_PASSWORD=...`).
 
      To make sure all prerequisites are satisfied, run:
 
@@ -35,8 +40,9 @@
         `Makefile` to understand what it does. Again, you can reduce the time
         needed through parallelization but you need enough memory, too.
 
-    3. Initialize the platform. Careful, this will reset all database volumes.
-        So don't run this command after using the platform for a while.
+    3. Initialize the platform. **Careful, this will reset all database
+       volumes.** So don't run this command after using the platform for a
+       while.
 
         ```
         make initialize
