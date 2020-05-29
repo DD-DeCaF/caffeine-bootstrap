@@ -20,9 +20,6 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - name: Check for the availability of all required command line tools.
-      id: check
-      run: make check
     - name: Print versions of important tools.
       run: |
         bash --version
@@ -30,7 +27,9 @@ jobs:
         make --version
         docker version
         docker-compose version
-      if: ${{ steps.check.outcome == 'failure' || steps.check.outcome == 'success' }}
+    - name: Check for the availability of all required command line tools.
+      id: check
+      run: make check
     - name: Download all dependent repositories.
       id: setup
       run: make setup
