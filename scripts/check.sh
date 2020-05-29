@@ -49,11 +49,11 @@ fi
 
 # Check for the presence of the POSTGRES_PASSWORD variable.
 set +u
-if [[ -z POSTGRES_PASSWORD ]]; then
+if [[ -z "${POSTGRES_PASSWORD}" ]]; then
     set -a
     source .env
     set +a
-    if [[ -z POSTGRES_PASSWORD ]]; then
+    if [[ -z "${POSTGRES_PASSWORD}" ]]; then
         echo "POSTGRES_PASSWORD: no"
         if (( 1 > $FAILURE )); then
             FAILURE=1
