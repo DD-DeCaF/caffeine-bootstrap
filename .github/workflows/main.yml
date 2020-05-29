@@ -24,16 +24,16 @@ jobs:
       id: check
       run: make check
     - name: Print versions of important tools.
-      run:
-        - bash --version
-        - git --version
-        - make --version
-        - docker version
-        - docker-compose version
+      run: |
+        bash --version
+        git --version
+        make --version
+        docker version
+        docker-compose version
       if: ${{ steps.check.outcome == "failure" || steps.check.outcome == "success" }}
     - name: Download all dependent repositories.
       id: setup
-      run: make setup -j -O
+      run: make setup
       if: ${{ steps.check.outcome == "failure" || steps.check.outcome == "success" }}
     - name: Build all local Docker images.
       id: install
@@ -41,5 +41,5 @@ jobs:
       if: ${{ steps.setup.outcome == "success" }}
     - name: Initialize databases.
       id: initialize
-      run: make initialize -j -O
+      run: make initialize
       if: ${{ steps.install.outcome == "success" }}
