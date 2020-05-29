@@ -15,6 +15,7 @@ jobs:
   build:
     runs-on: ${{ matrix.os }}
     strategy:
+      fail-fast: false
       matrix:
         os: [ubuntu-latest]
 
@@ -30,7 +31,7 @@ jobs:
     - name: Check for the availability of all required command line tools.
       id: check
       run: make check
-      if: always()
+      if: ${{ always() }}
     - name: Print outcome
       run: echo "${{ steps.check.outcome }}"
     - name: Download all dependent repositories.
