@@ -30,6 +30,9 @@ jobs:
     - name: Check for the availability of all required command line tools.
       id: check
       run: make check
+      if: always()
+    - name: Print outcome
+      run: echo "${{ steps.check.outcome }}"
     - name: Download all dependent repositories.
       id: setup
       run: make setup
