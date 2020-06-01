@@ -31,19 +31,16 @@ jobs:
     - name: Check for the availability of all required command line tools.
       id: check
       run: make check
-    - name: Print outcome
-      run: echo "${{ steps.check.outcome }}"
-      if: ${{ always() }}
     - name: Download all dependent repositories.
       id: setup
       run: make setup
-      if: steps.check.outcome == 'failure' || steps.check.outcome == 'success'
+      if: success() || steps.check.outcome == 'failure'
     - name: Build all local Docker images.
       id: install
       run: make install -j -O
-      if: steps.setup.outcome == 'success'
+      if: success() || steps.setup.outcome == 'success'
     - name: Initialize databases.
       id: initialize
       run: make initialize
-      if: steps.install.outcome == 'success'
+      if: success() || steps.install.outcome == 'success'
 
