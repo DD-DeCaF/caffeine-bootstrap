@@ -75,7 +75,7 @@ clean-env:
 
 .PHONY: setup $(repos)
 ## Clone all repositories for local use.
-setup: .env clean .build $(repos) copy-cplex
+setup: .env clean .build $(repos) tag-spy copy-cplex
 	$(info **********************************************************************)
 	$(info * NOTICE)
 	$(info **********************************************************************)
@@ -91,6 +91,9 @@ setup: .env clean .build $(repos) copy-cplex
 
 $(repos):
 	./scripts/clone_or_pull.sh "$@" > /dev/null
+
+tag-spy:
+	docker pull dddecaf/tag-spy:latest
 
 copy-cplex: modeling-base
 	@echo $(shell [ -f $(CPLEX) ] > /dev/null \
