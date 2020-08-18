@@ -15,16 +15,30 @@ jobs:
   build:
     runs-on: ${{ matrix.os }}
     strategy:
+      fail-fast: false
       matrix:
         os: [ubuntu-latest]
 
     steps:
     - uses: actions/checkout@v2
+    - name: Print versions of important tools.
+      run: |
+        bash --version
+        git --version
+        make --version
+        docker version
+        docker-compose version
     - name: Check for the availability of all required command line tools.
+      id: check
       run: make check
+      continue-on-error: true
     - name: Download all dependent repositories.
+      id: setup
       run: make setup
     - name: Build all local Docker images.
-      run: make install
+      id: install
+      run: make install -j -O
     - name: Initialize databases.
+      id: initialize
       run: make initialize
+
