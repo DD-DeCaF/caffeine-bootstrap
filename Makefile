@@ -195,11 +195,9 @@ $(eval BASE_TAG := $(shell cat .build/MODELING_BASE_TAG))
 $(eval NAME := $(shell echo "$1" | tr '[:lower:]-' '[:upper:]_'))
 $(eval BUILD_TAG := $(call build-tag,$1))
 $(eval BUILD_COMMIT := $(call commit,$1))
-$(eval BUILD_TIMESTAMP := $(shell date --utc --iso-8601=seconds))
 $(file >.build/$(NAME)_TAG,$(BUILD_TAG))
 docker build --build-arg BASE_TAG=$(BASE_TAG) \
 	--build-arg BUILD_COMMIT=$(BUILD_COMMIT) \
-	--build-arg BUILD_TIMESTAMP=$(BUILD_TIMESTAMP) \
 	--tag gcr.io/dd-decaf-cfbf6/$1:$(BUILD_TAG) \
 	$1
 @touch .build/$1
