@@ -249,12 +249,12 @@ initialize: .build .build/neo4j .build/demo
 	$(info Creating databases...)
 	docker-compose up --detach postgres
 	./iam/scripts/wait_for_postgres.sh
-	docker-compose exec postgres psql -U postgres -c "create database iam;"
-	docker-compose exec postgres psql -U postgres -c "create database maps;"
-	docker-compose exec postgres psql -U postgres -c "create database metabolic_ninja;"
-	docker-compose exec postgres psql -U postgres -c "create database model_storage;"
-	docker-compose exec postgres psql -U postgres -c "create database warehouse;"
-	docker-compose exec postgres psql -U postgres -c "create database designs;"
+	docker-compose exec -T postgres psql -U postgres -c "create database iam;"
+	docker-compose exec -T postgres psql -U postgres -c "create database maps;"
+	docker-compose exec -T postgres psql -U postgres -c "create database metabolic_ninja;"
+	docker-compose exec -T postgres psql -U postgres -c "create database model_storage;"
+	docker-compose exec -T postgres psql -U postgres -c "create database warehouse;"
+	docker-compose exec -T postgres psql -U postgres -c "create database designs;"
 	docker-compose run --rm iam flask db upgrade
 	docker-compose run --rm map-storage flask db upgrade
 	docker-compose run --rm metabolic-ninja flask db upgrade
@@ -266,7 +266,7 @@ initialize: .build .build/neo4j .build/demo
 .build/neo4j: .build/databases
 	$(info Populating id-mapper...)
 	docker-compose up --detach neo4j
-	docker-compose exec neo4j neo4j-admin load --from=/dump/id-mapper.dump
+	docker-compose exec -T neo4j neo4j-admin load --from=/dump/id-mapper.dump
 	@touch .build/$(@F)
 
 .build/demo: .build/databases
