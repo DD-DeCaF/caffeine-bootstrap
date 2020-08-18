@@ -31,16 +31,14 @@ jobs:
     - name: Check for the availability of all required command line tools.
       id: check
       run: make check
+      continue-on-error: true
     - name: Download all dependent repositories.
       id: setup
       run: make setup
-      if: success() || steps.check.outcome == 'failure'
     - name: Build all local Docker images.
       id: install
       run: make install -j -O
-      if: success() || steps.setup.outcome == 'success'
     - name: Initialize databases.
       id: initialize
       run: make initialize
-      if: success() || steps.install.outcome == 'success'
 
